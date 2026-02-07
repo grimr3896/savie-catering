@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -17,13 +18,69 @@ import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { services, galleryImages, testimonials } from '@/lib/data';
 
-// A placeholder for the image upload component
-const ImageUploader = () => (
-  <div className="border-2 border-dashed border-muted-foreground/50 rounded-lg p-8 flex flex-col items-center justify-center text-center text-muted-foreground h-48">
-    <Upload className="w-8 h-8 mb-2" />
-    <p>Click to upload or drag and drop</p>
-  </div>
-);
+// An upload component that opens the file dialog and handles drag-and-drop
+const ImageUploader = () => {
+    const inputRef = React.useRef<HTMLInputElement>(null);
+    const [dragging, setDragging] = React.useState(false);
+
+    const handleFileSelect = (file: File) => {
+        // For now, we'll just log the file name and show an alert.
+        // The next step would be to upload this file and update the UI.
+        console.log('Selected file:', file.name);
+        alert(`Selected file: ${file.name}. Upload functionality is being developed!`);
+    };
+
+    const handleClick = () => {
+        inputRef.current?.click();
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            handleFileSelect(e.target.files[0]);
+        }
+    };
+
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDragging(true);
+    };
+
+    const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDragging(false);
+    };
+
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDragging(false);
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleFileSelect(e.dataTransfer.files[0]);
+        }
+    };
+
+    return (
+        <div 
+            className={`border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center text-center text-muted-foreground h-48 cursor-pointer transition-colors ${dragging ? 'border-primary bg-primary/10' : 'border-muted-foreground/50 hover:border-primary hover:bg-primary/5'}`}
+            onClick={handleClick}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+        >
+            <input
+                type="file"
+                ref={inputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleFileChange}
+            />
+            <Upload className="w-8 h-8 mb-2" />
+            <p>Click to upload or drag and drop</p>
+        </div>
+    );
+};
 
 const heroImage = PlaceHolderImages.find((p) => p.id === 'hero-image');
 const aboutUsImage = PlaceHolderImages.find((p) => p.id === 'about-us-image');
