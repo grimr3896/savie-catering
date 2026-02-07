@@ -3,10 +3,8 @@ import Link from 'next/link';
 import type { StaticImageData } from 'next/image';
 import {
   ArrowRight,
-  ChefHat,
   Quote,
   Star,
-  UtensilsCrossed,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -188,36 +186,6 @@ export default function Home() {
             <CarouselPrevious />
             <CarouselNext />
           </Carousel>
-        </div>
-      </section>
-
-      <section id="ai-menu" className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <Card className="bg-accent text-accent-foreground p-8 md:p-12 lg:p-16 flex flex-col md:flex-row items-center gap-8">
-            <div className="text-center md:text-left">
-              <h2 className="text-3xl md:text-4xl font-headline font-semibold">
-                Plan Your Perfect Menu
-              </h2>
-              <p className="mt-4 text-lg">
-                Not sure where to start? Use our AI-powered tool to generate
-                personalized menu suggestions based on your event type, guest
-                preferences, and budget.
-              </p>
-              <Button
-                asChild
-                variant="secondary"
-                size="lg"
-                className="mt-8"
-              >
-                <Link href="/menu-suggestions">
-                  Try the Menu Planner <ChefHat />
-                </Link>
-              </Button>
-            </div>
-            <div className="flex-shrink-0">
-              <UtensilsCrossed className="w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48 opacity-20" />
-            </div>
-          </Card>
         </div>
       </section>
     </div>
