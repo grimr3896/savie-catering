@@ -83,6 +83,18 @@
       "description": "A table laden with various cheeses and charcuterie.",
       "imageUrl": "https://images.unsplash.com/photo-1611764197743-702a4d01463b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjaGFyY3V0ZXJpZSUyMGJvYXJkfGVufDB8fHx8MTc3MDQyNDcwM3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "charcuterie board"
+    },
+    {
+      "id": "package-image-1",
+      "description": "A placeholder for a wedding catering package.",
+      "imageUrl": "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx3ZWRkaW5nJTIwZm9vZHxlbnwwfHx8fDE3NzA0MTcxMjl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "wedding food"
+    },
+    {
+      "id": "package-image-2",
+      "description": "A placeholder for a corporate event catering package.",
+      "imageUrl": "https://images.unsplash.com/photo-1769638913840-2ca96d90e8a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjb3Jwb3JhdGUlMjBmb29kfGVufDB8fHx8MTc3MDQyNjE1M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "corporate food"
     }
   ]
 }

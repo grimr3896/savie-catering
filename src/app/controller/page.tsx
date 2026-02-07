@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Upload, Edit, Trash2 } from 'lucide-react';
 import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 // A placeholder for the image upload component
 const ImageUploader = () => (
@@ -22,6 +23,9 @@ const ImageUploader = () => (
     <p>Click to upload or drag and drop</p>
   </div>
 );
+
+const packageImage1 = PlaceHolderImages.find((p) => p.id === 'package-image-1');
+const packageImage2 = PlaceHolderImages.find((p) => p.id === 'package-image-2');
 
 export default function ControllerPage() {
   return (
@@ -105,7 +109,7 @@ export default function ControllerPage() {
                     <h4 className="font-semibold">Current Packages</h4>
                     <div className="border rounded-lg p-2 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                        <Image src="https://picsum.photos/seed/p1/40/40" alt="package" width={40} height={40} className="rounded" />
+                        {packageImage1 && <Image src={packageImage1.imageUrl} alt={packageImage1.description} width={40} height={40} className="rounded" data-ai-hint={packageImage1.imageHint} />}
                         <span>The Wedding Package</span>
                         </div>
                         <div className="flex gap-2">
@@ -115,8 +119,8 @@ export default function ControllerPage() {
                     </div>
                      <div className="border rounded-lg p-2 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                        <Image src="https://picsum.photos/seed/p2/40/40" alt="package" width={40} height={40} className="rounded" />
-                        <span>The Funeral Package</span>
+                        {packageImage2 && <Image src={packageImage2.imageUrl} alt={packageImage2.description} width={40} height={40} className="rounded" data-ai-hint={packageImage2.imageHint}/>}
+                        <span>The Corporate Package</span>
                         </div>
                         <div className="flex gap-2">
                             <Button variant="ghost" size="icon"><Edit className="w-4 h-4" /></Button>
