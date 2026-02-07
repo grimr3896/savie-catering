@@ -14,6 +14,8 @@ const navLinks = [
   { href: '/about', label: 'About' },
   { href: '/services', label: 'Services' },
   { href: '/gallery', label: 'Gallery' },
+  { href: '/menu-suggestions', label: 'Menu Planner' },
+  { href: '/controller', label: 'Controller' },
 ];
 
 export function Header() {
