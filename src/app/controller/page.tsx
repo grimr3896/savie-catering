@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Upload, Edit, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { services, galleryImages, testimonials } from '@/lib/data';
 
 // A placeholder for the image upload component
 const ImageUploader = () => (
@@ -24,8 +25,9 @@ const ImageUploader = () => (
   </div>
 );
 
-const packageImage1 = PlaceHolderImages.find((p) => p.id === 'package-image-1');
-const packageImage2 = PlaceHolderImages.find((p) => p.id === 'package-image-2');
+const heroImage = PlaceHolderImages.find((p) => p.id === 'hero-image');
+const aboutUsImage = PlaceHolderImages.find((p) => p.id === 'about-us-image');
+
 
 export default function ControllerPage() {
   return (
@@ -51,14 +53,32 @@ export default function ControllerPage() {
           <CardContent className="space-y-6">
             <div>
               <Label htmlFor="hero-image">Homepage Hero Image</Label>
+              {heroImage && (
+                <div className="my-2 rounded-lg overflow-hidden relative aspect-video">
+                  <Image
+                    src={heroImage.imageUrl}
+                    alt={heroImage.description}
+                    fill
+                    className="object-cover"
+                    data-ai-hint={heroImage.imageHint}
+                  />
+                </div>
+              )}
               <ImageUploader />
             </div>
             <div>
-              <Label htmlFor="premier-image">Premier Section Image</Label>
-              <ImageUploader />
-            </div>
-            <div>
-              <Label htmlFor="services-image">Services Section Image</Label>
+              <Label htmlFor="about-us-image">About Us Page Image</Label>
+              {aboutUsImage && (
+                <div className="my-2 rounded-lg overflow-hidden relative aspect-video">
+                  <Image
+                    src={aboutUsImage.imageUrl}
+                    alt={aboutUsImage.description}
+                    fill
+                    className="object-cover"
+                    data-ai-hint={aboutUsImage.imageHint}
+                  />
+                </div>
+              )}
               <ImageUploader />
             </div>
           </CardContent>
@@ -68,10 +88,10 @@ export default function ControllerPage() {
         </Card>
 
         <div className="col-span-1 space-y-8">
-            {/* Visual Archive */}
+            {/* Visual Archive -> Gallery */}
             <Card>
             <CardHeader>
-                <CardTitle>Visual Archive</CardTitle>
+                <CardTitle>Visual Archive (Gallery)</CardTitle>
                 <CardDescription>Manage your event portfolio.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -83,55 +103,63 @@ export default function ControllerPage() {
                 <Label>Upload Image</Label>
                 <ImageUploader />
                 </div>
-            </CardContent>
-            <CardFooter>
-                <Button>Add to Archive</Button>
-            </CardFooter>
-            </Card>
-
-            {/* Manage Packages */}
-            <Card>
-            <CardHeader>
-                <CardTitle>Manage Packages</CardTitle>
-                <CardDescription>Add or remove service packages.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                <Input placeholder="Package Title" />
-                <Input placeholder="Guest Count (e.g. 50-100 guests)" />
-                <Textarea placeholder="Package description..." />
-                <Textarea placeholder="Price/features, one per line..." />
-                <div>
-                <Label>Package Image</Label>
-                <ImageUploader />
-                </div>
-                <Button className="w-full">Add Package</Button>
+                 <Button className="w-full">Add to Archive</Button>
                 <div className="space-y-2 pt-4">
-                    <h4 className="font-semibold">Current Packages</h4>
-                    <div className="border rounded-lg p-2 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                        {packageImage1 && <Image src={packageImage1.imageUrl} alt={packageImage1.description} width={40} height={40} className="rounded" data-ai-hint={packageImage1.imageHint} />}
-                        <span>The Wedding Package</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <Button variant="ghost" size="icon"><Edit className="w-4 h-4" /></Button>
-                            <Button variant="ghost" size="icon" className="text-destructive"><Trash2 className="w-4 h-4" /></Button>
-                        </div>
-                    </div>
-                     <div className="border rounded-lg p-2 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                        {packageImage2 && <Image src={packageImage2.imageUrl} alt={packageImage2.description} width={40} height={40} className="rounded" data-ai-hint={packageImage2.imageHint}/>}
-                        <span>The Corporate Package</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <Button variant="ghost" size="icon"><Edit className="w-4 h-4" /></Button>
-                            <Button variant="ghost" size="icon" className="text-destructive"><Trash2 className="w-4 h-4" /></Button>
-                        </div>
+                    <h4 className="font-semibold">Current Gallery Images</h4>
+                    <div className="max-h-96 overflow-y-auto space-y-2 pr-2">
+                        {galleryImages.map(image => (
+                             <div key={image.id} className="border rounded-lg p-2 flex items-center justify-between">
+                                <div className="flex items-center gap-2 overflow-hidden">
+                                <Image src={image.src} alt={image.alt} width={40} height={40} className="rounded flex-shrink-0" data-ai-hint={image.aiHint} />
+                                <span className="text-sm truncate">{image.alt}</span>
+                                </div>
+                                <div className="flex gap-2 flex-shrink-0">
+                                    <Button variant="ghost" size="icon"><Edit className="w-4 h-4" /></Button>
+                                    <Button variant="ghost" size="icon" className="text-destructive"><Trash2 className="w-4 h-4" /></Button>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </CardContent>
             </Card>
         </div>
         
+        {/* Manage Services */}
+        <Card className="lg:col-span-2">
+            <CardHeader>
+                <CardTitle>Manage Services</CardTitle>
+                <CardDescription>Add, edit, or remove service offerings.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                 <div className="space-y-2 pt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {services.map(service => (
+                             <Card key={service.id}>
+                                <CardHeader>
+                                    <div className="flex items-center gap-2">
+                                        <service.icon className="w-6 h-6 text-primary"/>
+                                        <h3 className="text-lg font-headline">{service.title}</h3>
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-sm text-muted-foreground h-20">{service.description}</p>
+                                    <p className="text-sm font-semibold mt-2">Starting from ${service.price}</p>
+                                </CardContent>
+                                <CardFooter className="flex justify-end gap-2">
+                                    <Button variant="outline" size="sm"><Edit className="w-4 h-4 mr-2" />Edit</Button>
+                                    <Button variant="outline" size="sm" className="text-destructive hover:text-destructive"><Trash2 className="w-4 h-4 mr-2" />Delete</Button>
+                                </CardFooter>
+                            </Card>
+                        ))}
+                         <Card className="flex items-center justify-center border-dashed min-h-[200px]">
+                            <Button variant="outline" className="w-full h-full">Add New Service</Button>
+                        </Card>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+
         {/* Manage Testimonials */}
         <Card>
           <CardHeader>
@@ -142,24 +170,22 @@ export default function ControllerPage() {
             <Input placeholder="Client Name" />
             <Input placeholder="Client Role (e.g. Wedding Client)" />
             <Textarea placeholder="Client quote..."/>
-            <Label>Client Avatar</Label>
-            <ImageUploader />
             <Button className="w-full">Add Testimonial</Button>
              <div className="space-y-2 pt-4">
                 <h4 className="font-semibold">Current Testimonials</h4>
-                <div className="border rounded-lg p-2 flex items-center justify-between">
-                    <span>Amina & Juma</span>
-                    <div className="flex gap-2">
-                        <Button variant="ghost" size="icon"><Edit className="w-4 h-4" /></Button>
-                        <Button variant="ghost" size="icon" className="text-destructive"><Trash2 className="w-4 h-4" /></Button>
-                    </div>
-                </div>
-                 <div className="border rounded-lg p-2 flex items-center justify-between">
-                    <span>David Kimani</span>
-                    <div className="flex gap-2">
-                        <Button variant="ghost" size="icon"><Edit className="w-4 h-4" /></Button>
-                        <Button variant="ghost" size="icon" className="text-destructive"><Trash2 className="w-4 h-4" /></Button>
-                    </div>
+                <div className="max-h-64 overflow-y-auto space-y-2 pr-2">
+                    {testimonials.map(testimonial => (
+                        <div key={testimonial.id} className="border rounded-lg p-3 flex items-center justify-between">
+                            <div className="overflow-hidden">
+                                <p className="font-semibold">{testimonial.name}</p>
+                                <p className="text-sm text-muted-foreground truncate">"{testimonial.quote}"</p>
+                            </div>
+                            <div className="flex gap-2 flex-shrink-0">
+                                <Button variant="ghost" size="icon"><Edit className="w-4 h-4" /></Button>
+                                <Button variant="ghost" size="icon" className="text-destructive"><Trash2 className="w-4 h-4" /></Button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
           </CardContent>
@@ -178,26 +204,6 @@ export default function ControllerPage() {
             </CardContent>
             <CardFooter>
                 <Button>Save Settings</Button>
-            </CardFooter>
-            </Card>
-
-            {/* Add a New Service */}
-            <Card>
-            <CardHeader>
-                <CardTitle>Add a New Service</CardTitle>
-                <CardDescription>Add a new offering to your catalog.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                <Input placeholder="Service Title (e.g. Wedding Catering)" />
-                <Input placeholder="Lucide Icon Name (e.g. Cake)" />
-                <Textarea placeholder="Describe the service..." />
-                <Input placeholder="Category (e.g. Catering Services)" />
-                <Input placeholder="Event Types (e.g. Weddings, Receptions)" />
-                <Label>Service Image</Label>
-                <ImageUploader />
-            </CardContent>
-            <CardFooter>
-                <Button>Add Service</Button>
             </CardFooter>
             </Card>
         </div>
