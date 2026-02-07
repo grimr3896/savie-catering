@@ -8,7 +8,6 @@ export function Footer() {
     { href: '/about', label: 'About Us' },
     { href: '/services', label: 'Services' },
     { href: '/gallery', label: 'Gallery' },
-    { href: '/contact', label: 'Contact' },
   ];
 
   return (
@@ -65,6 +64,14 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+               <li>
+                  <Link
+                    href="/about#contact"
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Contact
+                  </Link>
+                </li>
             </ul>
           </div>
 

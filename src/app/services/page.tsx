@@ -34,7 +34,7 @@ export default function ServicesPage() {
                 Starting from ${service.price}
               </p>
               <Button asChild className="w-full">
-                <Link href="/contact">Inquire Now</Link>
+                <Link href="/about#contact">Inquire Now</Link>
               </Button>
             </CardFooter>
           </Card>
