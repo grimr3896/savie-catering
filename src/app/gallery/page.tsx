@@ -1,0 +1,41 @@
+import Image from 'next/image';
+import { galleryImages } from '@/lib/data';
+import { Card } from '@/components/ui/card';
+
+export default function GalleryPage() {
+  return (
+    <div className="container mx-auto px-4 py-16 md:py-24">
+      <div className="text-center max-w-3xl mx-auto">
+        <h1 className="text-4xl md:text-5xl font-headline font-bold">
+          Our Gallery
+        </h1>
+        <p className="mt-4 text-lg text-muted-foreground">
+          A visual feast of our finest creations and happiest moments. Explore
+          the events we've had the honor to be a part of.
+        </p>
+      </div>
+
+      <div className="mt-16 columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+        {galleryImages.map((image) => (
+          <div key={image.id} className="break-inside-avoid">
+            <Card className="overflow-hidden group">
+              <div className="relative aspect-auto">
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  data-ai-hint={image.aiHint}
+                  width={600}
+                  height={Math.random() > 0.5 ? 400 : 600}
+                  className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors flex items-end">
+                    <p className="text-white text-sm p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">{image.alt}</p>
+                </div>
+              </div>
+            </Card>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
