@@ -85,7 +85,7 @@ export default function AboutPage() {
     }
   }
   return (
-    <div className="bg-background">
+    <div className="bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-16 md:py-24">
         <div className="text-center">
           <h1 className="text-4xl md:text-5xl font-headline font-bold">
@@ -339,10 +339,10 @@ export default function AboutPage() {
                   <div>
                     <h4 className="font-semibold">Email</h4>
                     <a
-                      href="mailto:contact@savieroyal.com"
+                      href="mailto:savieroyal1@gmail.com"
                       className="text-muted-foreground hover:text-primary"
                     >
-                      contact@savieroyal.com
+                      savieroyal1@gmail.com
                     </a>
                   </div>
                 </div>
@@ -353,10 +353,10 @@ export default function AboutPage() {
                   <div>
                     <h4 className="font-semibold">Phone</h4>
                     <a
-                      href="tel:+1234567890"
+                      href="tel:0718469682"
                       className="text-muted-foreground hover:text-primary"
                     >
-                      (123) 456-7890
+                      0718 469 682
                     </a>
                   </div>
                 </div>

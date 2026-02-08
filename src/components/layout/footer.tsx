@@ -106,16 +106,16 @@ export function Footer() {
             <address className="mt-4 space-y-2 text-sm not-italic text-muted-foreground">
               <p>123 Catering Lane, Foodie City, 12345</p>
               <a
-                href="mailto:contact@savieroyal.com"
+                href="mailto:savieroyal1@gmail.com"
                 className="block hover:text-foreground transition-colors"
               >
-                contact@savieroyal.com
+                savieroyal1@gmail.com
               </a>
               <a
-                href="tel:+1234567890"
+                href="tel:0718469682"
                 className="block hover:text-foreground transition-colors"
               >
-                (123) 456-7890
+                0718 469 682
               </a>
             </address>
           </div>
