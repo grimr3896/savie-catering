@@ -24,11 +24,8 @@ import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-imag
 import { useSiteContent } from '@/context/SiteContentContext';
 
 export default function Home() {
-  const { heroImageUrl, services, galleryImages, testimonials } =
+  const { services, galleryImages, testimonials } =
     useSiteContent();
-  const heroImagePlaceholder = PlaceHolderImages.find(
-    (img) => img.id === 'hero-image'
-  );
 
   const galleryPreviewImages = galleryImages.slice(0, 4);
 
@@ -45,30 +42,29 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       <section className="relative h-[60vh] md:h-[80vh] w-full">
-        {heroImageUrl && heroImagePlaceholder && (
-          <Image
-            src={heroImageUrl}
-            alt={heroImagePlaceholder.description}
-            data-ai-hint={heroImagePlaceholder.imageHint}
-            fill
-            className="object-cover"
-            priority
-          />
-        )}
-        <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white p-4">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-headline font-bold text-white drop-shadow-lg">
-            Exquisite Catering for Unforgettable Moments
+          <h1
+            className="text-4xl md:text-6xl lg:text-7xl font-headline font-bold text-white drop-shadow-lg animate-fade-in-up"
+            style={{ animationDelay: '0.2s', opacity: 0 }}
+          >
+            Exceptional Catering. Crafted Live.
           </h1>
-          <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90">
-            From intimate gatherings to grand celebrations, we bring culinary
-            excellence and impeccable service to your table.
+          <p
+            className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 animate-fade-in-up"
+            style={{ animationDelay: '0.4s', opacity: 0 }}
+          >
+            Weddings • Corporate • Private Dining
           </p>
-          <Button asChild size="lg" className="mt-8">
-            <Link href="/booking">
-              Book Your Event <ArrowRight />
-            </Link>
-          </Button>
+          <div
+            className="animate-fade-in-up"
+            style={{ animationDelay: '0.6s', opacity: 0 }}
+          >
+            <Button asChild size="lg" className="mt-8">
+              <Link href="/booking">
+                Book an Event <ArrowRight />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 
