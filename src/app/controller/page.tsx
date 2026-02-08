@@ -204,6 +204,177 @@ const ServiceEditDialog = ({
   );
 };
 
+const GalleryEditDialog = ({
+  open,
+  onOpenChange,
+  image,
+  onSave,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  image: GalleryImage | null | undefined;
+  onSave: (imageData: { alt: string; src?: string }) => void;
+}) => {
+  const [alt, setAlt] = React.useState('');
+  const [imageFile, setImageFile] = React.useState<File | null>(null);
+  const [imagePreview, setImagePreview] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (image) {
+      setAlt(image.alt);
+      setImagePreview(image.src); // Show current image
+    } else {
+      setAlt('');
+      setImagePreview(null);
+    }
+    setImageFile(null); // Reset file on open
+  }, [image, open]);
+
+  React.useEffect(() => {
+    if (imageFile) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(imageFile);
+    }
+  }, [imageFile]);
+
+  const handleSaveClick = () => {
+    const saveData: { alt: string; src?: string } = { alt };
+    if (imagePreview && imagePreview !== image?.src) {
+      saveData.src = imagePreview;
+    }
+    onSave(saveData);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {image ? 'Edit Gallery Image' : 'Add Gallery Image'}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="gallery-alt">Image Caption</Label>
+            <Input
+              id="gallery-alt"
+              value={alt}
+              onChange={(e) => setAlt(e.target.value)}
+              placeholder="e.g., A beautiful summer wedding"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Image</Label>
+            {imagePreview && (
+              <div className="my-2 rounded-lg overflow-hidden relative aspect-video">
+                <Image
+                  src={imagePreview}
+                  alt="Image preview"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            )}
+            <ImageUploader onFileChange={setImageFile} />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleSaveClick}>Save Image</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const TestimonialEditDialog = ({
+  open,
+  onOpenChange,
+  testimonial,
+  onSave,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  testimonial: Testimonial | null | undefined;
+  onSave: (testimonialData: {
+    name: string;
+    event: string;
+    quote: string;
+  }) => void;
+}) => {
+  const [name, setName] = React.useState('');
+  const [event, setEvent] = React.useState('');
+  const [quote, setQuote] = React.useState('');
+
+  React.useEffect(() => {
+    if (testimonial) {
+      setName(testimonial.name);
+      setEvent(testimonial.event);
+      setQuote(testimonial.quote);
+    } else {
+      setName('');
+      setEvent('');
+      setQuote('');
+    }
+  }, [testimonial, open]);
+
+  const handleSaveClick = () => {
+    onSave({ name, event, quote });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {testimonial ? 'Edit Testimonial' : 'Add New Testimonial'}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="testimonial-name">Client Name</Label>
+            <Input
+              id="testimonial-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Client Name"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="testimonial-event">Event/Role</Label>
+            <Input
+              id="testimonial-event"
+              value={event}
+              onChange={(e) => setEvent(e.target.value)}
+              placeholder="e.g., Wedding Client"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="testimonial-quote">Quote</Label>
+            <Textarea
+              id="testimonial-quote"
+              value={quote}
+              onChange={(e) => setQuote(e.target.value)}
+              placeholder="Client quote..."
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleSaveClick}>Save Testimonial</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 export default function ControllerPage() {
   const { toast } = useToast();
   const {
@@ -298,12 +469,21 @@ export default function ControllerPage() {
     React.useState<GalleryImage[]>(initialGalleryImages);
   const [galleryImageToDelete, setGalleryImageToDelete] =
     React.useState<GalleryImage | null>(null);
+  const [isGalleryDialogOpen, setGalleryDialogOpen] = React.useState(false);
+  const [editingGalleryImage, setEditingGalleryImage] = React.useState<
+    GalleryImage | null | undefined
+  >(undefined);
 
   // --- State for Testimonials ---
   const [testimonials, setTestimonials] =
     React.useState<Testimonial[]>(initialTestimonials);
   const [testimonialToDelete, setTestimonialToDelete] =
     React.useState<Testimonial | null>(null);
+  const [isTestimonialDialogOpen, setTestimonialDialogOpen] =
+    React.useState(false);
+  const [editingTestimonial, setEditingTestimonial] = React.useState<
+    Testimonial | null | undefined
+  >(undefined);
 
   const getImageUrl = (
     imageId: string | undefined
@@ -354,6 +534,37 @@ export default function ControllerPage() {
     }
   };
 
+  const handleSaveGalleryImage = (imageData: {
+    alt: string;
+    src?: string;
+  }) => {
+    if (editingGalleryImage) {
+      setCurrentGalleryImages(
+        currentGalleryImages.map((img) =>
+          img.id === editingGalleryImage.id ? { ...img, ...imageData } : img
+        )
+      );
+      toast({
+        title: 'Gallery Image Updated',
+        description: `The image has been updated.`,
+      });
+    } else {
+      const newImage: GalleryImage = {
+        id: `gallery-image-${Date.now()}`,
+        src: imageData.src || `https://picsum.photos/seed/${Date.now()}/600/400`,
+        alt: imageData.alt,
+        aiHint: 'custom image',
+      };
+      setCurrentGalleryImages([newImage, ...currentGalleryImages]);
+      toast({
+        title: 'Gallery Image Added',
+        description: `The new image has been added.`,
+      });
+    }
+    setGalleryDialogOpen(false);
+    setEditingGalleryImage(undefined);
+  };
+
   const confirmDeleteGalleryImage = () => {
     if (galleryImageToDelete) {
       setCurrentGalleryImages(
@@ -365,6 +576,39 @@ export default function ControllerPage() {
       });
       setGalleryImageToDelete(null);
     }
+  };
+
+  const handleSaveTestimonial = (testimonialData: {
+    name: string;
+    event: string;
+    quote: string;
+  }) => {
+    if (editingTestimonial) {
+      setTestimonials(
+        testimonials.map((t) =>
+          t.id === editingTestimonial.id
+            ? { ...editingTestimonial, ...testimonialData }
+            : t
+        )
+      );
+      toast({
+        title: 'Testimonial Updated',
+        description: `The testimonial from ${testimonialData.name} has been updated.`,
+      });
+    } else {
+      const newTestimonial: Testimonial = {
+        id: Date.now(),
+        rating: 5,
+        ...testimonialData,
+      };
+      setTestimonials([newTestimonial, ...testimonials]);
+      toast({
+        title: 'Testimonial Added',
+        description: `The testimonial from ${testimonialData.name} has been added.`,
+      });
+    }
+    setTestimonialDialogOpen(false);
+    setEditingTestimonial(undefined);
   };
 
   const confirmDeleteTestimonial = () => {
@@ -446,18 +690,16 @@ export default function ControllerPage() {
               <CardDescription>Manage your event portfolio.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="image-caption">Image Caption</Label>
-                <Input
-                  id="image-caption"
-                  placeholder="e.g., A beautiful summer wedding setup"
-                />
-              </div>
-              <div>
-                <Label>Upload Image</Label>
-                <ImageUploader onFileChange={() => {}} />
-              </div>
-              <Button className="w-full">Add to Archive</Button>
+              <Button
+                className="w-full"
+                onClick={() => {
+                  setEditingGalleryImage(null);
+                  setGalleryDialogOpen(true);
+                }}
+              >
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add to Archive
+              </Button>
               <div className="space-y-2 pt-4">
                 <h4 className="font-semibold">Current Gallery Images</h4>
                 <div className="max-h-96 overflow-y-auto space-y-2 pr-2">
@@ -478,7 +720,14 @@ export default function ControllerPage() {
                         <span className="text-sm truncate">{image.alt}</span>
                       </div>
                       <div className="flex gap-2 flex-shrink-0">
-                        <Button variant="ghost" size="icon">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            setEditingGalleryImage(image);
+                            setGalleryDialogOpen(true);
+                          }}
+                        >
                           <Edit className="w-4 h-4" />
                         </Button>
                         <Button
@@ -597,10 +846,16 @@ export default function ControllerPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Input placeholder="Client Name" />
-            <Input placeholder="Client Role (e.g. Wedding Client)" />
-            <Textarea placeholder="Client quote..." />
-            <Button className="w-full">Add Testimonial</Button>
+            <Button
+              className="w-full"
+              onClick={() => {
+                setEditingTestimonial(null);
+                setTestimonialDialogOpen(true);
+              }}
+            >
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add Testimonial
+            </Button>
             <div className="space-y-2 pt-4">
               <h4 className="font-semibold">Current Testimonials</h4>
               <div className="max-h-64 overflow-y-auto space-y-2 pr-2">
@@ -616,7 +871,14 @@ export default function ControllerPage() {
                       </p>
                     </div>
                     <div className="flex gap-2 flex-shrink-0">
-                      <Button variant="ghost" size="icon">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setEditingTestimonial(testimonial);
+                          setTestimonialDialogOpen(true);
+                        }}
+                      >
                         <Edit className="w-4 h-4" />
                       </Button>
                       <Button
@@ -662,6 +924,18 @@ export default function ControllerPage() {
         onOpenChange={setServiceDialogOpen}
         service={editingService}
         onSave={handleSaveService}
+      />
+      <TestimonialEditDialog
+        open={isTestimonialDialogOpen}
+        onOpenChange={setTestimonialDialogOpen}
+        testimonial={editingTestimonial}
+        onSave={handleSaveTestimonial}
+      />
+      <GalleryEditDialog
+        open={isGalleryDialogOpen}
+        onOpenChange={setGalleryDialogOpen}
+        image={editingGalleryImage}
+        onSave={handleSaveGalleryImage}
       />
       <AlertDialog
         open={!!serviceToDelete}
