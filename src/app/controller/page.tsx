@@ -227,27 +227,35 @@ export default function ControllerPage() {
 
   React.useEffect(() => {
     if (heroImageFile) {
-      const objectUrl = URL.createObjectURL(heroImageFile);
-      setHeroImagePreview(objectUrl);
-      return () => URL.revokeObjectURL(objectUrl);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setHeroImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(heroImageFile);
+    } else {
+      setHeroImagePreview(null);
     }
   }, [heroImageFile]);
 
   React.useEffect(() => {
     if (aboutImageFile) {
-      const objectUrl = URL.createObjectURL(aboutImageFile);
-      setAboutImagePreview(objectUrl);
-      return () => URL.revokeObjectURL(objectUrl);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAboutImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(aboutImageFile);
+    } else {
+      setAboutImagePreview(null);
     }
   }, [aboutImageFile]);
 
   const handleUpdateSiteImages = () => {
     let imageUpdated = false;
-    if (heroImagePreview) {
+    if (heroImageFile && heroImagePreview) {
       setHeroImageUrl(heroImagePreview);
       imageUpdated = true;
     }
-    if (aboutImagePreview) {
+    if (aboutImageFile && aboutImagePreview) {
       setAboutUsImageUrl(aboutImagePreview);
       imageUpdated = true;
     }
@@ -258,6 +266,8 @@ export default function ControllerPage() {
         description:
           'Your new images are now live. Changes are temporary and will be lost on refresh.',
       });
+      if (heroImageFile) setHeroImageFile(null);
+      if (aboutImageFile) setAboutImageFile(null);
     } else {
       toast({
         title: 'No Changes',
