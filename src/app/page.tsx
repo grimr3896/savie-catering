@@ -41,16 +41,15 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
-      <section className="relative h-[60vh] md:h-[80vh] w-full">
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white p-4">
+      <section className="flex h-[60vh] md:h-[80vh] w-full flex-col items-center justify-center bg-secondary p-4 text-center">
           <h1
-            className="text-4xl md:text-6xl lg:text-7xl font-headline font-bold text-white drop-shadow-lg animate-fade-in-up"
+            className="text-4xl md:text-6xl lg:text-7xl font-headline font-bold animate-fade-in-up"
             style={{ animationDelay: '0.2s', opacity: 0 }}
           >
             Exceptional Catering. Crafted Live.
           </h1>
           <p
-            className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 animate-fade-in-up"
+            className="mt-4 max-w-2xl text-lg md:text-xl text-muted-foreground animate-fade-in-up"
             style={{ animationDelay: '0.4s', opacity: 0 }}
           >
             Weddings • Corporate • Private Dining
@@ -65,10 +64,9 @@ export default function Home() {
               </Link>
             </Button>
           </div>
-        </div>
       </section>
 
-      <section id="services" className="py-16 md:py-24 bg-background/90 backdrop-blur-sm">
+      <section id="services" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-headline font-semibold">
@@ -203,7 +201,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="gallery" className="py-16 md:py-24">
+      <section id="gallery" className="py-16 md:py-24 bg-secondary">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-headline font-semibold">
@@ -241,7 +239,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="testimonials" className="py-16 md:py-24 bg-background/90 backdrop-blur-sm">
+      <section id="testimonials" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-headline font-semibold">
