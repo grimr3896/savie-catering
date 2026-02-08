@@ -9,6 +9,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -19,16 +20,24 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-images';
 import { useSiteContent } from '@/context/SiteContentContext';
 
 export default function Home() {
-  const { heroImageUrl, services, galleryImages, testimonials } = useSiteContent();
+  const { heroImageUrl, services, galleryImages, testimonials } =
+    useSiteContent();
   const heroImagePlaceholder = PlaceHolderImages.find(
     (img) => img.id === 'hero-image'
   );
 
   const galleryPreviewImages = galleryImages.slice(0, 4);
+
+  const getImageUrl = (
+    imageId: string | undefined
+  ): ImagePlaceholder | undefined => {
+    if (!imageId) return undefined;
+    return PlaceHolderImages.find((p) => p.id === imageId);
+  };
 
   return (
     <div className="flex flex-col">
@@ -73,24 +82,49 @@ export default function Home() {
             </p>
           </div>
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.filter(s => s.category === 'package').map((service) => (
-              <Card
-                key={service.id}
-                className="flex flex-col items-center text-center hover:shadow-lg transition-shadow duration-300"
-              >
-                <CardHeader>
-                  <div className="mx-auto bg-primary/10 p-4 rounded-full">
-                    <service.icon className="w-8 h-8 text-primary" />
-                  </div>
-                  <CardTitle className="font-headline mt-4">
-                    {service.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>{service.description}</CardDescription>
-                </CardContent>
-              </Card>
-            ))}
+            {services
+              .filter((s) => s.category === 'package')
+              .map((service) => {
+                const imagePlaceholder = getImageUrl(service.imageId);
+                const imageSrc = service.imageUrl || imagePlaceholder?.imageUrl;
+
+                return (
+                  <Card
+                    key={service.id}
+                    className="flex flex-col overflow-hidden hover:shadow-xl transition-shadow duration-300"
+                  >
+                    {imageSrc && (
+                      <div className="relative h-48 w-full">
+                        <Image
+                          src={imageSrc}
+                          alt={imagePlaceholder?.description || service.title}
+                          data-ai-hint={
+                            imagePlaceholder?.imageHint || 'custom image'
+                          }
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                    <CardHeader className="items-center text-center">
+                      <div className="bg-primary/10 p-4 rounded-full -mt-12 bg-background z-10 border">
+                        <service.icon className="w-10 h-10 text-primary" />
+                      </div>
+                      <CardTitle className="font-headline mt-4 text-2xl">
+                        {service.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-grow text-center">
+                      <CardDescription>{service.description}</CardDescription>
+                    </CardContent>
+                    <CardFooter className="flex flex-col items-center justify-center pt-4">
+                      <p className="text-sm text-muted-foreground">
+                        Starting from Ksh {service.price}
+                      </p>
+                    </CardFooter>
+                  </Card>
+                );
+              })}
           </div>
           <div className="text-center mt-12">
             <Button asChild variant="outline">
@@ -174,9 +208,7 @@ export default function Home() {
                           />
                         ))}
                       </div>
-                      <p className="mt-2 font-semibold">
-                        {testimonial.name}
-                      </p>
+                      <p className="mt-2 font-semibold">{testimonial.name}</p>
                       <p className="text-sm text-muted-foreground">
                         {testimonial.event}
                       </p>
