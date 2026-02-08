@@ -951,28 +951,6 @@ export default function ControllerPage() {
             </div>
           </CardContent>
         </Card>
-
-        <div className="space-y-8">
-          {/* n8n Automation Bridge */}
-          <Card>
-            <CardHeader>
-              <CardTitle>n8n Automation Bridge</CardTitle>
-              <CardDescription>
-                Connect to your n8n automation backend.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Label htmlFor="webhook-url">Webhook URL</Label>
-              <Input
-                id="webhook-url"
-                placeholder="https://your.n8n.instance/webhook-url"
-              />
-            </CardContent>
-            <CardFooter>
-              <Button>Save Settings</Button>
-            </CardFooter>
-          </Card>
-        </div>
       </div>
       <ServiceEditDialog
         open={isServiceDialogOpen}
