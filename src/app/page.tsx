@@ -1,11 +1,9 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import type { StaticImageData } from 'next/image';
-import {
-  ArrowRight,
-  Quote,
-  Star,
-} from 'lucide-react';
+import { ArrowRight, Quote, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -23,19 +21,24 @@ import {
 } from '@/components/ui/carousel';
 import { services, galleryImages, testimonials } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useSiteContent } from '@/context/SiteContentContext';
 
-const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image');
 const galleryPreviewImages = galleryImages.slice(0, 4);
 
 export default function Home() {
+  const { heroImageUrl } = useSiteContent();
+  const heroImagePlaceholder = PlaceHolderImages.find(
+    (img) => img.id === 'hero-image'
+  );
+
   return (
     <div className="flex flex-col">
       <section className="relative h-[60vh] md:h-[80vh] w-full">
-        {heroImage && (
+        {heroImageUrl && heroImagePlaceholder && (
           <Image
-            src={heroImage.imageUrl}
-            alt={heroImage.description}
-            data-ai-hint={heroImage.imageHint}
+            src={heroImageUrl}
+            alt={heroImagePlaceholder.description}
+            data-ai-hint={heroImagePlaceholder.imageHint}
             fill
             className="object-cover"
             priority

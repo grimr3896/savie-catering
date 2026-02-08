@@ -46,6 +46,7 @@ import {
 } from '@/lib/data';
 import type { Service, Testimonial, GalleryImage } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
+import { useSiteContent } from '@/context/SiteContentContext';
 
 const ImageUploader = ({
   onFileChange,
@@ -189,10 +190,7 @@ const ServiceEditDialog = ({
           </div>
         </div>
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
           <Button onClick={handleSaveClick}>Save Service</Button>
@@ -204,16 +202,28 @@ const ServiceEditDialog = ({
 
 export default function ControllerPage() {
   const { toast } = useToast();
-  
-  // --- State for Site-Wide Imagery ---
-  const heroImagePlaceholder = PlaceHolderImages.find((p) => p.id === 'hero-image');
-  const aboutUsImagePlaceholder = PlaceHolderImages.find((p) => p.id === 'about-us-image');
+  const {
+    heroImageUrl,
+    setHeroImageUrl,
+    aboutUsImageUrl,
+    setAboutUsImageUrl,
+  } = useSiteContent();
+
+  const heroImagePlaceholder = PlaceHolderImages.find(
+    (p) => p.id === 'hero-image'
+  );
+  const aboutUsImagePlaceholder = PlaceHolderImages.find(
+    (p) => p.id === 'about-us-image'
+  );
 
   const [heroImageFile, setHeroImageFile] = React.useState<File | null>(null);
-  const [heroImagePreview, setHeroImagePreview] = React.useState(heroImagePlaceholder?.imageUrl);
-
   const [aboutImageFile, setAboutImageFile] = React.useState<File | null>(null);
-  const [aboutImagePreview, setAboutImagePreview] = React.useState(aboutUsImagePlaceholder?.imageUrl);
+
+  const [heroImagePreview, setHeroImagePreview] = React.useState<string | null>(
+    null
+  );
+  const [aboutImagePreview, setAboutImagePreview] =
+    React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (heroImageFile) {
@@ -232,13 +242,29 @@ export default function ControllerPage() {
   }, [aboutImageFile]);
 
   const handleUpdateSiteImages = () => {
-    // In a real app, you'd upload heroImageFile and aboutImageFile here.
-    toast({
-        title: "Images Updated (Simulated)",
-        description: "In a real app, your new images would be saved.",
-      });
-  }
+    let imageUpdated = false;
+    if (heroImagePreview) {
+      setHeroImageUrl(heroImagePreview);
+      imageUpdated = true;
+    }
+    if (aboutImagePreview) {
+      setAboutUsImageUrl(aboutImagePreview);
+      imageUpdated = true;
+    }
 
+    if (imageUpdated) {
+      toast({
+        title: 'Images Updated',
+        description:
+          'Your new images are now live. Changes are temporary and will be lost on refresh.',
+      });
+    } else {
+      toast({
+        title: 'No Changes',
+        description: 'No new images were selected to update.',
+      });
+    }
+  };
 
   // --- State for Services ---
   const [services, setServices] = React.useState<Service[]>(initialServices);
@@ -315,37 +341,38 @@ export default function ControllerPage() {
           <CardContent className="space-y-6">
             <div>
               <Label htmlFor="hero-image">Homepage Hero Image</Label>
-              {heroImagePreview && (
-                <div className="my-2 rounded-lg overflow-hidden relative aspect-video">
-                  <Image
-                    src={heroImagePreview}
-                    alt={heroImagePlaceholder?.description || 'Hero image preview'}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={heroImagePlaceholder?.imageHint}
-                  />
-                </div>
-              )}
+              <div className="my-2 rounded-lg overflow-hidden relative aspect-video">
+                <Image
+                  src={heroImagePreview || heroImageUrl}
+                  alt={heroImagePlaceholder?.description || 'Hero image preview'}
+                  fill
+                  className="object-cover"
+                  data-ai-hint={heroImagePlaceholder?.imageHint}
+                />
+              </div>
               <ImageUploader onFileChange={setHeroImageFile} />
             </div>
             <div>
               <Label htmlFor="about-us-image">About Us Page Image</Label>
-              {aboutImagePreview && (
-                <div className="my-2 rounded-lg overflow-hidden relative aspect-video">
-                  <Image
-                    src={aboutImagePreview}
-                    alt={aboutUsImagePlaceholder?.description || 'About us image preview'}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={aboutUsImagePlaceholder?.imageHint}
-                  />
-                </div>
-              )}
+              <div className="my-2 rounded-lg overflow-hidden relative aspect-video">
+                <Image
+                  src={aboutImagePreview || aboutUsImageUrl}
+                  alt={
+                    aboutUsImagePlaceholder?.description ||
+                    'About us image preview'
+                  }
+                  fill
+                  className="object-cover"
+                  data-ai-hint={aboutUsImagePlaceholder?.imageHint}
+                />
+              </div>
               <ImageUploader onFileChange={setAboutImageFile} />
             </div>
           </CardContent>
           <CardFooter>
-            <Button className="w-full" onClick={handleUpdateSiteImages}>Update Site Images</Button>
+            <Button className="w-full" onClick={handleUpdateSiteImages}>
+              Update Site Images
+            </Button>
           </CardFooter>
         </Card>
 
@@ -485,7 +512,9 @@ export default function ControllerPage() {
         <Card>
           <CardHeader>
             <CardTitle>Manage Testimonials</CardTitle>
-            <CardDescription>Add or remove client testimonials.</CardDescription>
+            <CardDescription>
+              Add or remove client testimonials.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Input placeholder="Client Name" />
@@ -561,7 +590,8 @@ export default function ControllerPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the service {'"'}
+              This action cannot be undone. This will permanently delete the
+              service {'"'}
               {serviceToDelete?.title}
               {'"'}.
             </AlertDialogDescription>
