@@ -2,8 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { StaticImageData } from 'next/image';
+import { useRouter } from 'next/navigation';
 import { ArrowRight, Quote, Star, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,16 +23,50 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
   PlaceHolderImages,
   type ImagePlaceholder,
 } from '@/lib/placeholder-images';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function Home() {
   const { services, galleryImages, testimonials, heroImageUrl } =
     useSiteContent();
   const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
+  const [isControllerModalOpen, setIsControllerModalOpen] = useState(false);
+  const [controllerCode, setControllerCode] = useState('');
+  const [codeError, setCodeError] = useState('');
+
+  const CONTROLLER_ACCESS_CODE = '739482615904';
+  const CONTROLLER_PIN_CODE = '1994';
+
+  useEffect(() => {
+    if (searchQuery === CONTROLLER_ACCESS_CODE) {
+      setIsControllerModalOpen(true);
+    }
+  }, [searchQuery]);
+
+  const handleControllerAccess = () => {
+    if (controllerCode === CONTROLLER_PIN_CODE) {
+      setCodeError('');
+      setIsControllerModalOpen(false);
+      setSearchQuery('');
+      setControllerCode('');
+      router.push('/controller');
+    } else {
+      setCodeError('Incorrect code. Please try again.');
+    }
+  };
 
   const galleryPreviewImages = galleryImages.slice(0, 4);
 
@@ -347,6 +382,53 @@ export default function Home() {
           </Carousel>
         </div>
       </section>
+      <Dialog
+        open={isControllerModalOpen}
+        onOpenChange={(isOpen) => {
+          setIsControllerModalOpen(isOpen);
+          if (!isOpen) {
+            setSearchQuery('');
+            setControllerCode('');
+            setCodeError('');
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Access Controller</DialogTitle>
+            <DialogDescription>
+              Please enter the PIN code to access the content controller.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="code" className="text-right">
+                PIN
+              </Label>
+              <Input
+                id="code"
+                type="password"
+                value={controllerCode}
+                onChange={(e) => setControllerCode(e.target.value)}
+                className="col-span-3"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleControllerAccess();
+                  }
+                }}
+              />
+            </div>
+            {codeError && (
+              <p className="text-sm font-medium text-destructive text-center">
+                {codeError}
+              </p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button onClick={handleControllerAccess}>Unlock</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

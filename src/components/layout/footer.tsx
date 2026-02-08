@@ -11,7 +11,6 @@ export function Footer() {
   const navLinks = [
     { href: '/about', label: 'About Us' },
     { href: '/gallery', label: 'Gallery' },
-    { href: '/controller', label: 'Controller' },
   ];
 
   return (
