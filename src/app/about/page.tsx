@@ -349,6 +349,22 @@ export default function AboutPage() {
                     </a>
                   </div>
                 </div>
+                <div className="flex items-start gap-4">
+                  <div className="bg-primary/10 p-3 rounded-full">
+                    <Phone className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">WhatsApp</h4>
+                    <a
+                      href="https://wa.me/254711665382"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      0711 665 382
+                    </a>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>

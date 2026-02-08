@@ -116,6 +116,14 @@ export function Footer() {
               >
                 0718 469 682
               </a>
+              <a
+                href="https://wa.me/254711665382"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block hover:text-foreground transition-colors"
+              >
+                0711 665 382 (WhatsApp)
+              </a>
             </address>
           </div>
         </div>
