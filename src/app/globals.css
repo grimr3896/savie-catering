@@ -4,58 +4,58 @@
 
 @layer base {
   :root {
-    --background: 140 50% 97%;
-    --foreground: 140 30% 20%;
+    --background: 45 100% 98%; /* Very light cream */
+    --foreground: 40 50% 15%; /* Dark brown */
     --card: 0 0% 100%;
-    --card-foreground: 140 30% 20%;
+    --card-foreground: 40 50% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 140 30% 20%;
-    --primary: 142 76% 36%;
-    --primary-foreground: 142 76% 96%;
-    --secondary: 140 20% 90%;
-    --secondary-foreground: 140 30% 20%;
-    --muted: 140 20% 90%;
-    --muted-foreground: 140 10% 45%;
-    --accent: 142 66% 42%;
-    --accent-foreground: 0 0% 100%;
+    --popover-foreground: 40 50% 15%;
+    --primary: 43 89% 51%; /* Gold */
+    --primary-foreground: 45 90% 10%; /* Dark text on gold */
+    --secondary: 45 50% 95%;
+    --secondary-foreground: 40 50% 15%;
+    --muted: 45 50% 95%;
+    --muted-foreground: 40 20% 45%;
+    --accent: 43 79% 61%; /* Lighter gold */
+    --accent-foreground: 40 50% 15%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 140 20% 85%;
-    --input: 140 20% 88%;
-    --ring: 142 76% 36%;
+    --border: 45 20% 85%;
+    --input: 45 20% 88%;
+    --ring: 43 89% 51%;
     --radius: 0.5rem;
-    --chart-1: 142 76% 36%;
-    --chart-2: 140 50% 50%;
-    --chart-3: 145 40% 25%;
-    --chart-4: 45 90% 60%;
-    --chart-5: 200 60% 50%;
+    --chart-1: 43 89% 51%;
+    --chart-2: 45 70% 60%;
+    --chart-3: 40 50% 30%;
+    --chart-4: 30 90% 60%;
+    --chart-5: 20 60% 50%;
   }
 
   .dark {
-    --background: 140 15% 10%;
-    --foreground: 140 20% 90%;
-    --card: 140 15% 12%;
-    --card-foreground: 140 20% 90%;
-    --popover: 140 15% 12%;
-    --popover-foreground: 140 20% 90%;
-    --primary: 142 71% 45%;
-    --primary-foreground: 142 80% 98%;
-    --secondary: 140 10% 20%;
-    --secondary-foreground: 140 20% 90%;
-    --muted: 140 10% 20%;
-    --muted-foreground: 140 10% 60%;
-    --accent: 142 71% 50%;
-    --accent-foreground: 142 80% 98%;
+    --background: 220 40% 10%; /* Deep Navy */
+    --foreground: 220 20% 90%; /* Light grey-blue */
+    --card: 220 40% 12%;
+    --card-foreground: 220 20% 90%;
+    --popover: 220 40% 12%;
+    --popover-foreground: 220 20% 90%;
+    --primary: 43 89% 51%; /* Gold */
+    --primary-foreground: 45 90% 10%;
+    --secondary: 220 30% 20%;
+    --secondary-foreground: 220 20% 90%;
+    --muted: 220 30% 20%;
+    --muted-foreground: 220 15% 60%;
+    --accent: 43 79% 61%; /* Lighter gold */
+    --accent-foreground: 45 90% 10%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 140 10% 25%;
-    --input: 140 10% 25%;
-    --ring: 142 71% 45%;
-    --chart-1: 142 71% 45%;
-    --chart-2: 140 50% 60%;
-    --chart-3: 145 40% 75%;
-    --chart-4: 45 90% 70%;
-    --chart-5: 200 60% 60%;
+    --border: 220 30% 25%;
+    --input: 220 30% 25%;
+    --ring: 43 89% 51%;
+    --chart-1: 43 89% 51%;
+    --chart-2: 45 70% 60%;
+    --chart-3: 40 50% 80%;
+    --chart-4: 30 90% 70%;
+    --chart-5: 20 60% 60%;
   }
 }
 
@@ -65,5 +65,9 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image: url('https://images.unsplash.com/photo-1533130061792-625cde3ab8c8?q=80&w=1974&auto=format&fit=crop');
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
   }
 }
