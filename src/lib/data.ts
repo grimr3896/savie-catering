@@ -9,7 +9,7 @@ import {
   Table,
   Soup,
 } from 'lucide-react';
-import type { Service, GalleryImage, Testimonial, TeamMember } from './definitions';
+import type { Service, GalleryImage, Testimonial, TeamMember, SocialLinks } from './definitions';
 import { PlaceHolderImages } from './placeholder-images';
 
 export const services: Service[] = [
@@ -149,3 +149,9 @@ export const teamMembers: TeamMember[] = [
   { id: 2, name: 'John Smith', role: 'Events Director', imageSeed: '302' },
   { id: 3, name: 'Emily White', role: 'Pastry Chef', imageSeed: '303' },
 ];
+
+export const socialLinks: SocialLinks = {
+  facebook: '#',
+  instagram: '#',
+  twitter: '#',
+};

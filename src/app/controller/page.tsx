@@ -37,7 +37,9 @@ import {
   PlusCircle,
   UtensilsCrossed,
   Star,
-  Info,
+  Facebook,
+  Instagram,
+  Twitter,
 } from 'lucide-react';
 import Image from 'next/image';
 import {
@@ -49,10 +51,10 @@ import type {
   Testimonial,
   GalleryImage,
   TeamMember,
+  SocialLinks,
 } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
 import { useSiteContent } from '@/context/SiteContentContext';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const ImageUploader = ({
   onFileChange,
@@ -588,6 +590,8 @@ export default function ControllerPage() {
     setTestimonials,
     teamMembers,
     setTeamMembers,
+    socialLinks,
+    setSocialLinks,
   } = useSiteContent();
 
   const heroImagePlaceholder = PlaceHolderImages.find(
@@ -691,6 +695,21 @@ export default function ControllerPage() {
   >(undefined);
   const [teamMemberToDelete, setTeamMemberToDelete] =
     React.useState<TeamMember | null>(null);
+  
+  // --- State for Social Links ---
+  const [currentSocialLinks, setCurrentSocialLinks] = React.useState<SocialLinks>(socialLinks);
+
+  React.useEffect(() => {
+    setCurrentSocialLinks(socialLinks);
+  }, [socialLinks]);
+
+  const handleSaveSocialLinks = () => {
+    setSocialLinks(currentSocialLinks);
+    toast({
+      title: 'Social Links Updated',
+      description: 'Your social media links have been saved.',
+    });
+  };
 
   const getImageUrl = (
     imageId: string | undefined
@@ -954,6 +973,63 @@ export default function ControllerPage() {
         </Card>
 
         <div className="col-span-1 space-y-8">
+           <Card>
+            <CardHeader>
+              <CardTitle>Social Media Links</CardTitle>
+              <CardDescription>
+                Update your social media profile URLs.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="facebook-url" className="flex items-center gap-2"><Facebook className='w-4 h-4'/> Facebook URL</Label>
+                <Input
+                  id="facebook-url"
+                  value={currentSocialLinks.facebook}
+                  onChange={(e) =>
+                    setCurrentSocialLinks({
+                      ...currentSocialLinks,
+                      facebook: e.target.value,
+                    })
+                  }
+                  placeholder="https://facebook.com/your-page"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="instagram-url" className="flex items-center gap-2"><Instagram className='w-4 h-4'/> Instagram URL</Label>
+                <Input
+                  id="instagram-url"
+                  value={currentSocialLinks.instagram}
+                  onChange={(e) =>
+                    setCurrentSocialLinks({
+                      ...currentSocialLinks,
+                      instagram: e.target.value,
+                    })
+                  }
+                  placeholder="https://instagram.com/your-handle"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="twitter-url" className="flex items-center gap-2"><Twitter className='w-4 h-4'/> Twitter URL</Label>
+                <Input
+                  id="twitter-url"
+                  value={currentSocialLinks.twitter}
+                  onChange={(e) =>
+                    setCurrentSocialLinks({
+                      ...currentSocialLinks,
+                      twitter: e.target.value,
+                    })
+                  }
+                  placeholder="https://twitter.com/your-handle"
+                />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button className="w-full" onClick={handleSaveSocialLinks}>
+                Update Social Links
+              </Button>
+            </CardFooter>
+          </Card>
           {/* Visual Archive -> Gallery */}
           <Card>
             <CardHeader>

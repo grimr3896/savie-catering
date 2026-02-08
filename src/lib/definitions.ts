@@ -34,6 +34,12 @@ export type TeamMember = {
   imageUrl?: string;
 };
 
+export type SocialLinks = {
+  facebook: string;
+  instagram: string;
+  twitter: string;
+};
+
 export type BookingRequest = {
   name: string;
   email: string;

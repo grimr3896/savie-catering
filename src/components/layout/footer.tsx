@@ -1,9 +1,13 @@
+'use client';
+
 import Link from 'next/link';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
+import { useSiteContent } from '@/context/SiteContentContext';
 
 export function Footer() {
+  const { socialLinks } = useSiteContent();
   const navLinks = [
     { href: '/about', label: 'About Us' },
     { href: '/gallery', label: 'Gallery' },
@@ -23,7 +27,9 @@ export function Footer() {
             <div className="mt-4 flex space-x-2">
               <Button variant="ghost" size="icon" asChild>
                 <a
-                  href="#"
+                  href={socialLinks.facebook}
+                  target='_blank'
+                  rel='noopener noreferrer'
                   aria-label="Facebook"
                   className="text-muted-foreground hover:text-foreground"
                 >
@@ -32,7 +38,9 @@ export function Footer() {
               </Button>
               <Button variant="ghost" size="icon" asChild>
                 <a
-                  href="#"
+                  href={socialLinks.instagram}
+                  target='_blank'
+                  rel='noopener noreferrer'
                   aria-label="Instagram"
                   className="text-muted-foreground hover:text-foreground"
                 >
@@ -41,7 +49,9 @@ export function Footer() {
               </Button>
               <Button variant="ghost" size="icon" asChild>
                 <a
-                  href="#"
+                  href={socialLinks.twitter}
+                  target='_blank'
+                  rel='noopener noreferrer'
                   aria-label="Twitter"
                   className="text-muted-foreground hover:text-foreground"
                 >

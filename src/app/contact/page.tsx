@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Mail, Phone, MapPin } from 'lucide-react';
+import { Loader2, Mail, Phone, Facebook, Instagram, Twitter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { submitContactForm } from './actions';
 import { Card, CardContent } from '@/components/ui/card';
+import { useSiteContent } from '@/context/SiteContentContext';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -32,6 +33,7 @@ type ContactFormValues = z.infer<typeof contactSchema>;
 export default function ContactPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const { socialLinks } = useSiteContent();
 
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
@@ -207,6 +209,54 @@ export default function ContactPage() {
                       className="text-muted-foreground hover:text-primary"
                     >
                       0711 665 382
+                    </a>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="bg-primary/10 p-3 rounded-full">
+                    <Facebook className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Facebook</h4>
+                    <a
+                      href={socialLinks.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      Follow on Facebook
+                    </a>
+                  </div>
+                </div>
+                 <div className="flex items-start gap-4">
+                  <div className="bg-primary/10 p-3 rounded-full">
+                    <Instagram className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Instagram</h4>
+                    <a
+                      href={socialLinks.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      Follow on Instagram
+                    </a>
+                  </div>
+                </div>
+                 <div className="flex items-start gap-4">
+                  <div className="bg-primary/10 p-3 rounded-full">
+                    <Twitter className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Twitter</h4>
+                    <a
+                      href={socialLinks.twitter}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      Follow on Twitter
                     </a>
                   </div>
                 </div>

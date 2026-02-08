@@ -2,8 +2,8 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import type { Service, GalleryImage, Testimonial, TeamMember } from '@/lib/definitions';
-import { services as initialServices, guestServices, galleryImages as initialGalleryImages, testimonials as initialTestimonials, teamMembers as initialTeamMembers } from '@/lib/data';
+import type { Service, GalleryImage, Testimonial, TeamMember, SocialLinks } from '@/lib/definitions';
+import { services as initialServices, guestServices, galleryImages as initialGalleryImages, testimonials as initialTestimonials, teamMembers as initialTeamMembers, socialLinks as initialSocialLinks } from '@/lib/data';
 
 const heroImagePlaceholder = PlaceHolderImages.find(
   (p) => p.id === 'hero-image'
@@ -14,6 +14,7 @@ const aboutUsImagePlaceholder = PlaceHolderImages.find(
 
 const HERO_IMAGE_STORAGE_KEY = 'savie-royal-heroImageUrl';
 const ABOUT_US_IMAGE_STORAGE_KEY = 'savie-royal-aboutUsImageUrl';
+const SOCIAL_LINKS_STORAGE_KEY = 'savie-royal-socialLinks';
 
 
 type SiteContentContextType = {
@@ -29,6 +30,8 @@ type SiteContentContextType = {
   setTestimonials: React.Dispatch<React.SetStateAction<Testimonial[]>>;
   teamMembers: TeamMember[];
   setTeamMembers: React.Dispatch<React.SetStateAction<TeamMember[]>>;
+  socialLinks: SocialLinks;
+  setSocialLinks: (links: SocialLinks) => void;
 };
 
 const SiteContentContext = createContext<SiteContentContextType | undefined>(
@@ -46,6 +49,7 @@ export const SiteContentProvider = ({ children }: { children: ReactNode }) => {
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>(initialGalleryImages);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(initialTestimonials);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialTeamMembers);
+  const [socialLinks, setSocialLinks] = useState<SocialLinks>(initialSocialLinks);
 
 
   useEffect(() => {
@@ -57,6 +61,10 @@ export const SiteContentProvider = ({ children }: { children: ReactNode }) => {
     if (storedAboutUsImage) {
       setAboutUsImageUrl(storedAboutUsImage);
     }
+    const storedSocialLinks = localStorage.getItem(SOCIAL_LINKS_STORAGE_KEY);
+    if (storedSocialLinks) {
+      setSocialLinks(JSON.parse(storedSocialLinks));
+    }
   }, []);
 
   const handleSetHeroImageUrl = (url: string) => {
@@ -67,6 +75,11 @@ export const SiteContentProvider = ({ children }: { children: ReactNode }) => {
   const handleSetAboutUsImageUrl = (url: string) => {
     localStorage.setItem(ABOUT_US_IMAGE_STORAGE_KEY, url);
     setAboutUsImageUrl(url);
+  };
+
+  const handleSetSocialLinks = (links: SocialLinks) => {
+    localStorage.setItem(SOCIAL_LINKS_STORAGE_KEY, JSON.stringify(links));
+    setSocialLinks(links);
   };
 
 
@@ -85,6 +98,8 @@ export const SiteContentProvider = ({ children }: { children: ReactNode }) => {
         setTestimonials,
         teamMembers,
         setTeamMembers,
+        socialLinks,
+        setSocialLinks: handleSetSocialLinks,
       }}
     >
       {children}
