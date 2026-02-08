@@ -88,11 +88,6 @@ export default function AboutPage() {
     }
   }
 
-  const getSocialLink = (platform: 'facebook' | 'instagram' | 'twitter'): SocialLink | undefined => {
-    return socialLinks.find(link => link.platform === platform);
-  }
-
-
   return (
     <div className="bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-16 md:py-24">
@@ -196,7 +191,7 @@ export default function AboutPage() {
                     <Image
                       src={
                         member.photo_url ||
-                        `https://picsum.photos/seed/${member.imageSeed}/200/200`
+                        `https://picsum.photos/seed/${member.id}/200/200`
                       }
                       alt={member.name}
                       data-ai-hint="portrait person"
@@ -367,7 +362,7 @@ export default function AboutPage() {
                     </a>
                   </div>
                 </div>
-                {socialLinks.filter(l => l.is_active).map(link => {
+                {socialLinks.filter(l => l.is_active).sort((a, b) => a.display_order - b.display_order).map(link => {
                   const Icon = socialIcons[link.platform];
                   if (!Icon) return null;
                   return (

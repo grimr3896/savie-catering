@@ -131,10 +131,7 @@ const getImageUrlFromService = (
   service: Service | null | undefined
 ): string | null => {
   if (!service) return null;
-  const placeholderImage = PlaceHolderImages.find(
-    (p) => p.id === service.imageId
-  );
-  return service.image_url || placeholderImage?.imageUrl || null;
+  return service.image_url || null;
 };
 
 const ServiceEditDialog = ({
@@ -296,6 +293,7 @@ const GalleryEditDialog = ({
   const [eventType, setEventType] = React.useState<GalleryImage['event_type']>('other');
   const [displayOrder, setDisplayOrder] = React.useState(0);
   const [isFeatured, setIsFeatured] = React.useState(false);
+  const [isActive, setIsActive] = React.useState(true);
   const [imageFile, setImageFile] = React.useState<File | null>(null);
   const [imagePreview, setImagePreview] = React.useState<string | null>(null);
 
@@ -306,11 +304,13 @@ const GalleryEditDialog = ({
       setEventType(image.event_type);
       setDisplayOrder(image.display_order);
       setIsFeatured(image.is_featured);
+      setIsActive(image.is_active);
     } else {
       setCaption('');
       setEventType('other');
       setDisplayOrder(0);
       setIsFeatured(false);
+      setIsActive(true);
       setImagePreview(null);
     }
     setImageFile(null); // Reset file on open
@@ -327,7 +327,13 @@ const GalleryEditDialog = ({
   }, [imageFile]);
 
   const handleSaveClick = () => {
-    const saveData: Partial<GalleryImage> = { caption, event_type: eventType, display_order: Number(displayOrder), is_featured: isFeatured };
+    const saveData: Partial<GalleryImage> = { 
+        caption, 
+        event_type: eventType, 
+        display_order: Number(displayOrder), 
+        is_featured: isFeatured,
+        is_active: isActive 
+    };
     if (imagePreview && imagePreview !== image?.image_url) {
       saveData.image_url = imagePreview;
     }
@@ -381,6 +387,10 @@ const GalleryEditDialog = ({
             <Switch id="gallery-featured" checked={isFeatured} onCheckedChange={setIsFeatured} />
             <Label htmlFor="gallery-featured">Featured Image</Label>
           </div>
+           <div className="flex items-center space-x-2">
+            <Switch id="gallery-active" checked={isActive} onCheckedChange={setIsActive} />
+            <Label htmlFor="gallery-active">Image is Active</Label>
+          </div>
           <div className="space-y-2">
             <Label>Image</Label>
             {imagePreview && (
@@ -419,29 +429,29 @@ const TestimonialEditDialog = ({
   onSave: (testimonialData: Partial<Testimonial>) => void;
 }) => {
   const [clientName, setClientName] = React.useState('');
-  const [event, setEvent] = React.useState('');
   const [quote, setQuote] = React.useState('');
   const [rating, setRating] = React.useState(5);
   const [isFeatured, setIsFeatured] = React.useState(true);
+  const [isActive, setIsActive] = React.useState(true);
 
   React.useEffect(() => {
     if (testimonial) {
       setClientName(testimonial.client_name);
-      setEvent(testimonial.event);
       setQuote(testimonial.quote);
       setRating(testimonial.rating);
       setIsFeatured(testimonial.is_featured);
+      setIsActive(testimonial.is_active);
     } else {
       setClientName('');
-      setEvent('');
       setQuote('');
       setRating(5);
       setIsFeatured(true);
+      setIsActive(true);
     }
   }, [testimonial, open]);
 
   const handleSaveClick = () => {
-    onSave({ client_name: clientName, event, quote, rating: Number(rating), is_featured: isFeatured });
+    onSave({ client_name: clientName, quote, rating: Number(rating), is_featured: isFeatured, is_active: isActive });
   };
 
   return (
@@ -460,15 +470,6 @@ const TestimonialEditDialog = ({
               value={clientName}
               onChange={(e) => setClientName(e.target.value)}
               placeholder="Client Name"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="testimonial-event">Event/Role</Label>
-            <Input
-              id="testimonial-event"
-              value={event}
-              onChange={(e) => setEvent(e.target.value)}
-              placeholder="e.g., Wedding Client"
             />
           </div>
           <div className="space-y-2">
@@ -504,6 +505,10 @@ const TestimonialEditDialog = ({
            <div className="flex items-center space-x-2">
             <Switch id="testimonial-featured" checked={isFeatured} onCheckedChange={setIsFeatured} />
             <Label htmlFor="testimonial-featured">Featured Testimonial</Label>
+          </div>
+           <div className="flex items-center space-x-2">
+            <Switch id="testimonial-active" checked={isActive} onCheckedChange={setIsActive} />
+            <Label htmlFor="testimonial-active">Testimonial is Active</Label>
           </div>
         </div>
         <DialogFooter>
@@ -543,10 +548,7 @@ const TeamMemberEditDialog = ({
       setBio(member.bio);
       setDisplayOrder(member.display_order);
       setIsActive(member.is_active);
-      setImagePreview(
-        member.photo_url ||
-          `https://picsum.photos/seed/${member.imageSeed}/200/200`
-      );
+      setImagePreview(member.photo_url || `https://picsum.photos/seed/${member.id}/200/200`);
     } else {
       setName('');
       setRole('');
@@ -579,8 +581,8 @@ const TeamMemberEditDialog = ({
 
     const initialImageUrl =
       member?.photo_url ||
-      (member?.imageSeed
-        ? `https://picsum.photos/seed/${member.imageSeed}/200/200`
+      (member?.id
+        ? `https://picsum.photos/seed/${member.id}/200/200`
         : null);
 
     if (imagePreview && imagePreview !== initialImageUrl) {
@@ -793,7 +795,7 @@ export default function ControllerPage() {
     React.useState<TeamMember | null>(null);
   
   // --- State for Social Links ---
-  const [currentSocialLinks, setCurrentSocialLinks] = React.useState<SocialLinks>(socialLinks);
+  const [currentSocialLinks, setCurrentSocialLinks] = React.useState<SocialLinks>([]);
 
   React.useEffect(() => {
     setCurrentSocialLinks(socialLinks);
@@ -814,13 +816,6 @@ export default function ControllerPage() {
     });
   };
 
-  const getImageUrl = (
-    imageId: string | undefined
-  ): ImagePlaceholder | undefined => {
-    if (!imageId) return undefined;
-    return PlaceHolderImages.find((p) => p.id === imageId);
-  };
-
   const handleSaveService = (serviceData: Partial<Service>) => {
     if (editingService) {
       setServices(
@@ -829,7 +824,6 @@ export default function ControllerPage() {
             ? {
                 ...s,
                 ...serviceData,
-                imageId: serviceData.image_url ? undefined : s.imageId,
               }
             : s
         )
@@ -849,8 +843,7 @@ export default function ControllerPage() {
         is_active: serviceData.is_active !== undefined ? serviceData.is_active : true,
         display_order: serviceData.display_order || 99,
         image_url: serviceData.image_url,
-        icon: UtensilsCrossed, // Default icon for new services
-        category: 'package', // Default category
+        created_at: new Date().toISOString()
       };
       setServices([newService, ...services]);
       toast({
@@ -893,7 +886,8 @@ export default function ControllerPage() {
         event_type: imageData.event_type || 'other',
         created_at: new Date().toISOString(),
         display_order: imageData.display_order || 99,
-        is_featured: imageData.is_featured !== undefined ? imageData.is_featured : false
+        is_featured: imageData.is_featured !== undefined ? imageData.is_featured : false,
+        is_active: imageData.is_active !== undefined ? imageData.is_active : true
       };
       setGalleryImages([newImage, ...galleryImages]);
       toast({
@@ -933,11 +927,11 @@ export default function ControllerPage() {
       const newTestimonial: Testimonial = {
         id: Date.now(),
         client_name: testimonialData.client_name || "Anonymous",
-        event: testimonialData.event || "Event",
         quote: testimonialData.quote || "",
         rating: testimonialData.rating || 5,
         source: 'Manual',
         is_featured: testimonialData.is_featured !== undefined ? testimonialData.is_featured : true,
+        is_active: testimonialData.is_active !== undefined ? testimonialData.is_active : true,
         created_at: new Date().toISOString(),
       };
       setTestimonials([newTestimonial, ...testimonials]);
@@ -971,7 +965,6 @@ export default function ControllerPage() {
             ? {
                 ...m,
                 ...memberData,
-                imageSeed: memberData.photo_url ? undefined : m.imageSeed, // clear imageSeed if new image uploaded
               }
             : m
         )
@@ -986,12 +979,10 @@ export default function ControllerPage() {
         name: memberData.name || "New Member",
         role: memberData.role || "Role",
         bio: memberData.bio || "",
-        photo_url: memberData.photo_url,
+        photo_url: memberData.photo_url || `https://picsum.photos/seed/${Date.now()}/200/200`,
         is_active: memberData.is_active !== undefined ? memberData.is_active : true,
         display_order: memberData.display_order || 99,
-        imageSeed: memberData.photo_url
-          ? undefined
-          : String(Math.floor(Math.random() * 1000) + 400),
+        joined_at: new Date().toISOString(),
       };
       setTeamMembers([newMember, ...teamMembers]);
       toast({
@@ -1083,7 +1074,7 @@ export default function ControllerPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {currentSocialLinks.map(link => {
+              {currentSocialLinks.sort((a,b) => a.display_order - b.display_order).map(link => {
                 const Icon = socialIcons[link.platform];
                 return (
                     <div key={link.platform} className="space-y-2">
@@ -1184,12 +1175,8 @@ export default function ControllerPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2 pt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {services.filter(s => s.is_active).sort((a,b) => a.display_order - b.display_order).map((service) => {
-                  const placeholderImage = getImageUrl(service.imageId);
-                  const imageSrc =
-                    service.image_url || placeholderImage?.imageUrl;
-                  const imageAlt =
-                    placeholderImage?.description || service.title;
+                {services.sort((a,b) => a.display_order - b.display_order).map((service) => {
+                  const imageSrc = service.image_url;
                   
                   return (
                     <Card
@@ -1200,7 +1187,7 @@ export default function ControllerPage() {
                         <div className="relative h-40 w-full">
                           <Image
                             src={imageSrc}
-                            alt={imageAlt}
+                            alt={service.title}
                             fill
                             className="object-cover"
                           />
@@ -1208,7 +1195,7 @@ export default function ControllerPage() {
                       )}
                       <CardHeader>
                         <div className="flex items-center gap-2">
-                          <service.icon className="w-6 h-6 text-primary" />
+                          <UtensilsCrossed className="w-6 h-6 text-primary" />
                           <h3 className="text-lg font-headline">
                             {service.title}
                           </h3>
@@ -1357,7 +1344,7 @@ export default function ControllerPage() {
                       <Image
                         src={
                           member.photo_url ||
-                          `https://picsum.photos/seed/${member.imageSeed}/40/40`
+                          `https://picsum.photos/seed/${member.id}/40/40`
                         }
                         alt={member.name}
                         width={40}

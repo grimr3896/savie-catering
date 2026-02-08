@@ -19,7 +19,7 @@ export default function GalleryPage() {
       </div>
 
       <div className="mt-16 columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-        {galleryImages.sort((a,b) => a.display_order - b.display_order).map((image, index) => (
+        {galleryImages.filter(img => img.is_active).sort((a,b) => a.display_order - b.display_order).map((image, index) => (
           <div key={image.id} className="break-inside-avoid">
             <Card className="overflow-hidden group">
               <div className="relative aspect-auto">

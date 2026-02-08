@@ -218,7 +218,7 @@ export default function ContactPage() {
                     </a>
                   </div>
                 </div>
-                 {socialLinks.filter(l => l.is_active).map(link => {
+                 {socialLinks.filter(l => l.is_active).sort((a, b) => a.display_order - b.display_order).map(link => {
                   const Icon = socialIcons[link.platform];
                   if (!Icon) return null;
                   return (

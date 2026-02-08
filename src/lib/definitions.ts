@@ -1,4 +1,3 @@
-import type { LucideIcon } from 'lucide-react';
 
 export type Service = {
   id: number;
@@ -7,12 +6,10 @@ export type Service = {
   long_description: string;
   price: number;
   currency: 'Ksh';
-  imageId?: string;
   image_url?: string;
   is_active: boolean;
   display_order: number;
-  icon: LucideIcon;
-  category: 'package' | 'guest';
+  created_at: string; // ISO date string
 };
 
 export type GalleryImage = {
@@ -23,16 +20,17 @@ export type GalleryImage = {
   created_at: string; // ISO date string
   display_order: number;
   is_featured: boolean;
+  is_active: boolean;
 };
 
 export type Testimonial = {
   id: number;
   client_name: string;
-  event: string;
   quote: string;
   rating: number; // numeric
   source: 'Google' | 'WhatsApp' | 'Facebook' | 'Manual';
   is_featured: boolean;
+  is_active: boolean;
   created_at: string; // ISO date string
 };
 
@@ -42,15 +40,18 @@ export type TeamMember = {
   role: string;
   bio: string;
   photo_url?: string;
-  imageSeed?: string; // Keep for placeholders
   display_order: number;
   is_active: boolean;
+  joined_at?: string; // ISO date string
+  left_at?: string; // ISO date string
 };
 
 export type SocialLink = {
+    id: number;
     platform: 'facebook' | 'instagram' | 'twitter';
     url: string;
     is_active: boolean;
+    display_order: number;
 };
 
 export type SocialLinks = SocialLink[];

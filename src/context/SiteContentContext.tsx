@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import type { Service, GalleryImage, Testimonial, TeamMember, SocialLinks } from '@/lib/definitions';
-import { services as initialServices, guestServices, galleryImages as initialGalleryImages, testimonials as initialTestimonials, teamMembers as initialTeamMembers, socialLinks as initialSocialLinks } from '@/lib/data';
+import { services as initialServices, galleryImages as initialGalleryImages, testimonials as initialTestimonials, teamMembers as initialTeamMembers, socialLinks as initialSocialLinks } from '@/lib/data';
 
 const heroImagePlaceholder = PlaceHolderImages.find(
   (p) => p.id === 'hero-image'
@@ -49,7 +49,7 @@ export const SiteContentProvider = ({ children }: { children: ReactNode }) => {
   const [aboutUsImageUrl, setAboutUsImageUrl] = useState<string>(
     aboutUsImagePlaceholder?.imageUrl || ''
   );
-  const [services, setServices] = useState<Service[]>([...initialServices, ...guestServices]);
+  const [services, setServices] = useState<Service[]>(initialServices);
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>(initialGalleryImages);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(initialTestimonials);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialTeamMembers);

@@ -31,7 +31,7 @@ export function Footer() {
               moments.
             </p>
             <div className="mt-4 flex space-x-2">
-              {socialLinks.filter(l => l.is_active).map(link => {
+              {socialLinks.filter(l => l.is_active).sort((a, b) => a.display_order - b.display_order).map(link => {
                   const Icon = socialIcons[link.platform];
                   if (!Icon) return null;
                   return (

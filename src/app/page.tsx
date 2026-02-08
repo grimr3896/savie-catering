@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import type { StaticImageData } from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Quote, Star, Search } from 'lucide-react';
+import { ArrowRight, Quote, Star, Search, UtensilsCrossed } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -68,14 +68,7 @@ export default function Home() {
     }
   };
 
-  const galleryPreviewImages = galleryImages.filter(g => g.is_featured).slice(0, 4);
-
-  const getImageUrl = (
-    imageId: string | undefined
-  ): ImagePlaceholder | undefined => {
-    if (!imageId) return undefined;
-    return PlaceHolderImages.find((p) => p.id === imageId);
-  };
+  const galleryPreviewImages = galleryImages.filter(g => g.is_active && g.is_featured).sort((a,b) => a.display_order - b.display_order).slice(0, 4);
 
   const heroImagePlaceholder = PlaceHolderImages.find(
     (p) => p.id === 'hero-image'
@@ -87,11 +80,6 @@ export default function Home() {
       (service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       service.short_description.toLowerCase().includes(searchQuery.toLowerCase()))
   ).sort((a,b) => a.display_order - b.display_order);
-
-  const cateringPackages = filteredServices.filter(
-    (s) => s.category === 'package'
-  );
-  const guestServices = filteredServices.filter((s) => s.category === 'guest');
 
   return (
     <div className="flex flex-col">
@@ -158,131 +146,53 @@ export default function Home() {
           </div>
 
           {filteredServices.length > 0 ? (
-            <>
-              {cateringPackages.length > 0 && (
-                <div className="mt-16">
-                  <h3 className="text-3xl font-headline font-semibold text-center mb-12">
-                    Catering Packages
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {cateringPackages.map((service) => {
-                      const imagePlaceholder = getImageUrl(service.imageId);
-                      const imageSrc =
-                        service.image_url || imagePlaceholder?.imageUrl;
+            <div className="mt-16">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredServices.map((service) => {
+                  const imageSrc = service.image_url;
 
-                      return (
-                        <Card
-                          key={service.id}
-                          className="flex flex-col overflow-hidden hover:shadow-xl transition-shadow duration-300"
-                        >
-                          {imageSrc && (
-                            <div className="relative h-48 w-full">
-                              <Image
-                                src={imageSrc}
-                                alt={
-                                  imagePlaceholder?.description || service.title
-                                }
-                                data-ai-hint={
-                                  imagePlaceholder?.imageHint || 'custom image'
-                                }
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                          )}
-                          <CardHeader className="items-center text-center">
-                            <div className="bg-primary/10 p-4 rounded-full -mt-12 bg-card z-10 border">
-                              <service.icon className="w-10 h-10 text-primary" />
-                            </div>
-                            <CardTitle className="font-headline mt-4 text-2xl">
-                              {service.title}
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="flex-grow text-center">
-                            <CardDescription>
-                              {service.short_description}
-                            </CardDescription>
-                          </CardContent>
-                          <CardFooter className="flex flex-col gap-4 pt-4">
-                            <p className="text-sm text-muted-foreground">
-                              Starting from {service.currency} {service.price}
-                            </p>
-                            <Button asChild className="w-full">
-                              <Link href="/about#contact">Inquire Now</Link>
-                            </Button>
-                          </CardFooter>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {guestServices.length > 0 && (
-                <div className="mt-24">
-                  <div className="text-center max-w-3xl mx-auto">
-                    <h3 className="text-3xl font-headline font-semibold">
-                      Guest Services
-                    </h3>
-                    <p className="mt-4 text-lg text-muted-foreground">
-                      Ensure your event runs smoothly with our professional
-                      on-site staff and services.
-                    </p>
-                  </div>
-                  <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {guestServices.map((service) => {
-                      const imagePlaceholder = getImageUrl(service.imageId);
-                      const imageSrc =
-                        service.image_url || imagePlaceholder?.imageUrl;
-
-                      return (
-                        <Card
-                          key={service.id}
-                          className="flex flex-col overflow-hidden hover:shadow-xl transition-shadow duration-300"
-                        >
-                          {imageSrc && (
-                            <div className="relative h-48 w-full">
-                              <Image
-                                src={imageSrc}
-                                alt={
-                                  imagePlaceholder?.description || service.title
-                                }
-                                data-ai-hint={
-                                  imagePlaceholder?.imageHint || 'custom image'
-                                }
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                          )}
-                          <CardHeader className="items-center text-center">
-                            <div className="bg-primary/10 p-4 rounded-full -mt-12 bg-card z-10 border">
-                              <service.icon className="w-10 h-10 text-primary" />
-                            </div>
-                            <CardTitle className="font-headline mt-4 text-2xl">
-                              {service.title}
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="flex-grow text-center">
-                            <CardDescription>
-                              {service.short_description}
-                            </CardDescription>
-                          </CardContent>
-                          <CardFooter className="flex flex-col gap-4 pt-4">
-                            <p className="text-sm text-muted-foreground">
-                              Starting from {service.currency} {service.price}
-                            </p>
-                            <Button asChild className="w-full">
-                              <Link href="/booking">Book This Service</Link>
-                            </Button>
-                          </CardFooter>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </>
+                  return (
+                    <Card
+                      key={service.id}
+                      className="flex flex-col overflow-hidden hover:shadow-xl transition-shadow duration-300"
+                    >
+                      {imageSrc && (
+                        <div className="relative h-48 w-full">
+                          <Image
+                            src={imageSrc}
+                            alt={service.title}
+                            data-ai-hint={'custom image'}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      )}
+                      <CardHeader className="items-center text-center">
+                        <div className="bg-primary/10 p-4 rounded-full -mt-12 bg-card z-10 border">
+                          <UtensilsCrossed className="w-10 h-10 text-primary" />
+                        </div>
+                        <CardTitle className="font-headline mt-4 text-2xl">
+                          {service.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="flex-grow text-center">
+                        <CardDescription>
+                          {service.short_description}
+                        </CardDescription>
+                      </CardContent>
+                      <CardFooter className="flex flex-col gap-4 pt-4">
+                        <p className="text-sm text-muted-foreground">
+                          Starting from {service.currency} {service.price}
+                        </p>
+                        <Button asChild className="w-full">
+                          <Link href="/about#contact">Inquire Now</Link>
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
           ) : (
             <div className="text-center py-16">
               <p className="text-lg text-muted-foreground">
@@ -348,7 +258,7 @@ export default function Home() {
             className="w-full max-w-4xl mx-auto mt-12"
           >
             <CarouselContent>
-              {testimonials.filter(t => t.is_featured).map((testimonial) => (
+              {testimonials.filter(t => t.is_active && t.is_featured).map((testimonial) => (
                 <CarouselItem key={testimonial.id}>
                   <Card className="border-none shadow-none bg-transparent">
                     <CardContent className="flex flex-col items-center text-center p-6">
@@ -369,9 +279,6 @@ export default function Home() {
                         ))}
                       </div>
                       <p className="mt-2 font-semibold">{testimonial.client_name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {testimonial.event}
-                      </p>
                     </CardContent>
                   </Card>
                 </CarouselItem>
