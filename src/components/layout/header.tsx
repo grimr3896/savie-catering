@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -25,6 +26,32 @@ export function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const mobileNavVariants = {
+    open: {
+      transition: { staggerChildren: 0.07, delayChildren: 0.2 },
+    },
+    closed: {
+      transition: { staggerChildren: 0.05, staggerDirection: -1 },
+    },
+  };
+
+  const mobileLinkVariants = {
+    open: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        y: { stiffness: 1000, velocity: -100 },
+      },
+    },
+    closed: {
+      y: 50,
+      opacity: 0,
+      transition: {
+        y: { stiffness: 1000 },
+      },
+    },
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
@@ -33,19 +60,26 @@ export function Header() {
         </div>
 
         <div className="flex flex-1 items-center justify-between">
-          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+          <nav className="hidden md:flex items-center space-x-1 p-1 bg-muted rounded-full">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  'transition-colors hover:text-foreground/80',
+                  'relative rounded-full px-4 py-1.5 text-sm font-medium transition-colors hover:text-primary',
                   pathname === link.href
-                    ? 'text-foreground'
-                    : 'text-foreground/60'
+                    ? 'text-primary-foreground'
+                    : 'text-foreground/70'
                 )}
               >
                 {link.label}
+                {pathname === link.href && (
+                  <motion.div
+                    layoutId="active-nav-link"
+                    className="absolute inset-0 z-[-1] bg-primary rounded-full"
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  />
+                )}
               </Link>
             ))}
           </nav>
@@ -62,28 +96,40 @@ export function Header() {
                 <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                 <div className="flex flex-col h-full">
                   <div className="p-4 border-b">
-                     <Logo />
+                    <Logo />
                   </div>
-                  <nav className="flex flex-col items-start space-y-4 p-4 text-base font-medium">
+                  <motion.nav
+                    initial="closed"
+                    animate={mobileMenuOpen ? 'open' : 'closed'}
+                    variants={mobileNavVariants}
+                    className="flex flex-col items-start space-y-2 p-4 text-lg font-medium"
+                  >
                     {navLinks.map((link) => (
-                      <Link
+                      <motion.div
                         key={link.href}
-                        href={link.href}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={cn(
-                          'transition-colors hover:text-foreground/80 w-full p-2 rounded-md',
-                          pathname === link.href
-                            ? 'text-foreground bg-muted'
-                            : 'text-foreground/60'
-                        )}
+                        variants={mobileLinkVariants}
+                        className="w-full"
                       >
-                        {link.label}
-                      </Link>
+                        <Link
+                          href={link.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={cn(
+                            'transition-colors hover:text-foreground/80 block w-full p-2 rounded-md',
+                            pathname === link.href
+                              ? 'text-foreground bg-muted'
+                              : 'text-foreground/60'
+                          )}
+                        >
+                          {link.label}
+                        </Link>
+                      </motion.div>
                     ))}
-                     <Button asChild className="w-full mt-4">
+                     <motion.div variants={mobileLinkVariants} className="w-full border-t mt-4 pt-4">
+                      <Button asChild className="w-full">
                         <Link href="/booking" onClick={() => setMobileMenuOpen(false)}>Book Your Event</Link>
                       </Button>
-                  </nav>
+                    </motion.div>
+                  </motion.nav>
                 </div>
               </SheetContent>
             </Sheet>
