@@ -1,8 +1,11 @@
+'use client';
+
 import Image from 'next/image';
-import { galleryImages } from '@/lib/data';
 import { Card } from '@/components/ui/card';
+import { useSiteContent } from '@/context/SiteContentContext';
 
 export default function GalleryPage() {
+  const { galleryImages } = useSiteContent();
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
       <div className="text-center max-w-3xl mx-auto">

@@ -21,6 +21,7 @@ export const services: Service[] = [
     icon: Sparkles,
     price: 2500,
     imageId: 'service-wedding',
+    category: 'package',
   },
   {
     id: 2,
@@ -30,6 +31,7 @@ export const services: Service[] = [
     icon: Briefcase,
     price: 1000,
     imageId: 'service-corporate',
+    category: 'package',
   },
   {
     id: 3,
@@ -39,6 +41,7 @@ export const services: Service[] = [
     icon: PartyPopper,
     price: 800,
     imageId: 'service-private-party',
+    category: 'package',
   },
   {
     id: 4,
@@ -48,6 +51,7 @@ export const services: Service[] = [
     icon: CakeSlice,
     price: 500,
     imageId: 'service-dessert-tables',
+    category: 'package',
   },
   {
     id: 5,
@@ -57,6 +61,7 @@ export const services: Service[] = [
     icon: GlassWater,
     price: 400,
     imageId: 'service-beverage',
+    category: 'package',
   },
   {
     id: 6,
@@ -66,6 +71,7 @@ export const services: Service[] = [
     icon: UtensilsCrossed,
     price: 1200,
     imageId: 'service-custom-menus',
+    category: 'package',
   },
 ];
 
@@ -78,6 +84,7 @@ export const guestServices: Service[] = [
     icon: UsersRound,
     price: 300,
     imageId: 'service-waiters',
+    category: 'guest',
   },
   {
     id: 8,
@@ -87,6 +94,7 @@ export const guestServices: Service[] = [
     icon: Table,
     price: 200,
     imageId: 'service-table-setup',
+    category: 'guest',
   },
   {
     id: 9,
@@ -96,6 +104,7 @@ export const guestServices: Service[] = [
     icon: Soup,
     price: 250,
     imageId: 'service-buffet-management',
+    category: 'guest',
   },
 ];
 

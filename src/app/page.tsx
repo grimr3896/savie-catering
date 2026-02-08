@@ -19,17 +19,16 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { services, galleryImages, testimonials } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useSiteContent } from '@/context/SiteContentContext';
 
-const galleryPreviewImages = galleryImages.slice(0, 4);
-
 export default function Home() {
-  const { heroImageUrl } = useSiteContent();
+  const { heroImageUrl, services, galleryImages, testimonials } = useSiteContent();
   const heroImagePlaceholder = PlaceHolderImages.find(
     (img) => img.id === 'hero-image'
   );
+
+  const galleryPreviewImages = galleryImages.slice(0, 4);
 
   return (
     <div className="flex flex-col">
@@ -74,7 +73,7 @@ export default function Home() {
             </p>
           </div>
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.slice(0, 3).map((service) => (
+            {services.filter(s => s.category === 'package').slice(0, 3).map((service) => (
               <Card
                 key={service.id}
                 className="flex flex-col items-center text-center hover:shadow-lg transition-shadow duration-300"

@@ -8,6 +8,7 @@ export type Service = {
   price: number;
   imageId?: string;
   imageUrl?: string;
+  category: 'package' | 'guest';
 };
 
 export type GalleryImage = {

@@ -42,12 +42,6 @@ import {
   PlaceHolderImages,
   type ImagePlaceholder,
 } from '@/lib/placeholder-images';
-import {
-  services as initialServices,
-  guestServices,
-  galleryImages as initialGalleryImages,
-  testimonials as initialTestimonials,
-} from '@/lib/data';
 import type { Service, Testimonial, GalleryImage } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
 import { useSiteContent } from '@/context/SiteContentContext';
@@ -431,6 +425,12 @@ export default function ControllerPage() {
     setHeroImageUrl,
     aboutUsImageUrl,
     setAboutUsImageUrl,
+    services,
+    setServices,
+    galleryImages,
+    setGalleryImages,
+    testimonials,
+    setTestimonials,
   } = useSiteContent();
 
   const heroImagePlaceholder = PlaceHolderImages.find(
@@ -501,10 +501,6 @@ export default function ControllerPage() {
   };
 
   // --- State for Services ---
-  const [services, setServices] = React.useState<Service[]>([
-    ...initialServices,
-    ...guestServices,
-  ]);
   const [isServiceDialogOpen, setServiceDialogOpen] = React.useState(false);
   const [editingService, setEditingService] = React.useState<
     Service | null | undefined
@@ -514,8 +510,6 @@ export default function ControllerPage() {
   );
 
   // --- State for Gallery ---
-  const [currentGalleryImages, setCurrentGalleryImages] =
-    React.useState<GalleryImage[]>(initialGalleryImages);
   const [galleryImageToDelete, setGalleryImageToDelete] =
     React.useState<GalleryImage | null>(null);
   const [isGalleryDialogOpen, setGalleryDialogOpen] = React.useState(false);
@@ -524,8 +518,6 @@ export default function ControllerPage() {
   >(undefined);
 
   // --- State for Testimonials ---
-  const [testimonials, setTestimonials] =
-    React.useState<Testimonial[]>(initialTestimonials);
   const [testimonialToDelete, setTestimonialToDelete] =
     React.useState<Testimonial | null>(null);
   const [isTestimonialDialogOpen, setTestimonialDialogOpen] =
@@ -571,6 +563,7 @@ export default function ControllerPage() {
         price: serviceData.price,
         imageUrl: serviceData.imageUrl,
         icon: UtensilsCrossed, // Default icon for new services
+        category: 'package', // Default category
       };
       setServices([newService, ...services]);
       toast({
@@ -598,8 +591,8 @@ export default function ControllerPage() {
     src?: string;
   }) => {
     if (editingGalleryImage) {
-      setCurrentGalleryImages(
-        currentGalleryImages.map((img) =>
+      setGalleryImages(
+        galleryImages.map((img) =>
           img.id === editingGalleryImage.id ? { ...img, ...imageData } : img
         )
       );
@@ -614,7 +607,7 @@ export default function ControllerPage() {
         alt: imageData.alt,
         aiHint: 'custom image',
       };
-      setCurrentGalleryImages([newImage, ...currentGalleryImages]);
+      setGalleryImages([newImage, ...galleryImages]);
       toast({
         title: 'Gallery Image Added',
         description: `The new image has been added.`,
@@ -626,8 +619,8 @@ export default function ControllerPage() {
 
   const confirmDeleteGalleryImage = () => {
     if (galleryImageToDelete) {
-      setCurrentGalleryImages(
-        currentGalleryImages.filter((img) => img.id !== galleryImageToDelete.id)
+      setGalleryImages(
+        galleryImages.filter((img) => img.id !== galleryImageToDelete.id)
       );
       toast({
         title: 'Gallery Image Deleted',
@@ -762,7 +755,7 @@ export default function ControllerPage() {
               <div className="space-y-2 pt-4">
                 <h4 className="font-semibold">Current Gallery Images</h4>
                 <div className="max-h-96 overflow-y-auto space-y-2 pr-2">
-                  {currentGalleryImages.map((image) => (
+                  {galleryImages.map((image) => (
                     <div
                       key={image.id}
                       className="border rounded-lg p-2 flex items-center justify-between"

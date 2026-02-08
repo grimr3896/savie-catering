@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import type { Service, GalleryImage, Testimonial } from '@/lib/definitions';
+import { services as initialServices, guestServices, galleryImages as initialGalleryImages, testimonials as initialTestimonials } from '@/lib/data';
 
 const heroImagePlaceholder = PlaceHolderImages.find(
   (p) => p.id === 'hero-image'
@@ -19,6 +21,12 @@ type SiteContentContextType = {
   setHeroImageUrl: (url: string) => void;
   aboutUsImageUrl: string;
   setAboutUsImageUrl: (url: string) => void;
+  services: Service[];
+  setServices: React.Dispatch<React.SetStateAction<Service[]>>;
+  galleryImages: GalleryImage[];
+  setGalleryImages: React.Dispatch<React.SetStateAction<GalleryImage[]>>;
+  testimonials: Testimonial[];
+  setTestimonials: React.Dispatch<React.SetStateAction<Testimonial[]>>;
 };
 
 const SiteContentContext = createContext<SiteContentContextType | undefined>(
@@ -32,6 +40,10 @@ export const SiteContentProvider = ({ children }: { children: ReactNode }) => {
   const [aboutUsImageUrl, setAboutUsImageUrl] = useState<string>(
     aboutUsImagePlaceholder?.imageUrl || ''
   );
+  const [services, setServices] = useState<Service[]>([...initialServices, ...guestServices]);
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>(initialGalleryImages);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(initialTestimonials);
+
 
   useEffect(() => {
     const storedHeroImage = localStorage.getItem(HERO_IMAGE_STORAGE_KEY);
@@ -62,6 +74,12 @@ export const SiteContentProvider = ({ children }: { children: ReactNode }) => {
         setHeroImageUrl: handleSetHeroImageUrl,
         aboutUsImageUrl,
         setAboutUsImageUrl: handleSetAboutUsImageUrl,
+        services,
+        setServices,
+        galleryImages,
+        setGalleryImages,
+        testimonials,
+        setTestimonials,
       }}
     >
       {children}

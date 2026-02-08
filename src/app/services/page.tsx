@@ -1,5 +1,6 @@
+'use client';
+
 import Image from 'next/image';
-import { services, guestServices } from '@/lib/data';
 import {
   Card,
   CardContent,
@@ -11,9 +12,13 @@ import {
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { PlaceHolderImages, ImagePlaceholder } from '@/lib/placeholder-images';
+import { useSiteContent } from '@/context/SiteContentContext';
 
 export default function ServicesPage() {
-  const cateringPackages = services;
+  const { services } = useSiteContent();
+
+  const cateringPackages = services.filter((s) => s.category === 'package');
+  const guestServices = services.filter((s) => s.category === 'guest');
 
   const getImageUrl = (
     imageId: string | undefined
@@ -41,18 +46,20 @@ export default function ServicesPage() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {cateringPackages.map((service) => {
-            const image = getImageUrl(service.imageId);
+            const imagePlaceholder = getImageUrl(service.imageId);
+            const imageSrc = service.imageUrl || imagePlaceholder?.imageUrl;
+
             return (
               <Card
                 key={service.id}
                 className="flex flex-col overflow-hidden hover:shadow-xl transition-shadow duration-300"
               >
-                {image && (
+                {imageSrc && (
                   <div className="relative h-48 w-full">
                     <Image
-                      src={image.imageUrl}
-                      alt={image.description}
-                      data-ai-hint={image.imageHint}
+                      src={imageSrc}
+                      alt={imagePlaceholder?.description || service.title}
+                      data-ai-hint={imagePlaceholder?.imageHint || 'custom image'}
                       fill
                       className="object-cover"
                     />
@@ -95,18 +102,20 @@ export default function ServicesPage() {
         </div>
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {guestServices.map((service) => {
-            const image = getImageUrl(service.imageId);
+            const imagePlaceholder = getImageUrl(service.imageId);
+            const imageSrc = service.imageUrl || imagePlaceholder?.imageUrl;
+            
             return (
               <Card
                 key={service.id}
                 className="flex flex-col overflow-hidden hover:shadow-xl transition-shadow duration-300"
               >
-                {image && (
+                {imageSrc && (
                   <div className="relative h-48 w-full">
                     <Image
-                      src={image.imageUrl}
-                      alt={image.description}
-                      data-ai-hint={image.imageHint}
+                      src={imageSrc}
+                      alt={imagePlaceholder?.description || service.title}
+                      data-ai-hint={imagePlaceholder?.imageHint || 'custom image'}
                       fill
                       className="object-cover"
                     />
