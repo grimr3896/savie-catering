@@ -39,7 +39,7 @@ const bookingSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
   email: z.string().email('Invalid email address.'),
   phone: z.string().min(10, 'Phone number is required.'),
-  eventType: z.string({ required_error: 'Please select an event type.' }),
+  eventType: z.string({ required_error: 'Please select an event type.' }).min(1, "Please select an event type."),
   eventDate: z.date({ required_error: 'An event date is required.' }),
   guestCount: z.coerce.number().int().positive('Number of guests is required.'),
   venue: z.string().min(3, 'Venue is required.'),
@@ -54,6 +54,13 @@ export default function BookingPage() {
 
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      venue: '',
+      details: '',
+    },
   });
 
   async function onSubmit(data: BookingFormValues) {
@@ -66,7 +73,7 @@ export default function BookingPage() {
         title: 'Booking Request Sent!',
         description: result.message,
       });
-      form.reset({ name: '', email: '', phone: '', guestCount: undefined, venue: '', details: '' });
+      form.reset();
     } else {
       toast({
         variant: 'destructive',
@@ -143,7 +150,7 @@ export default function BookingPage() {
                     <FormLabel>Event Type</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -213,7 +220,7 @@ export default function BookingPage() {
                     <FormItem>
                     <FormLabel>Estimated Number of Guests</FormLabel>
                     <FormControl>
-                        <Input type="number" placeholder="50" {...field} />
+                        <Input type="number" placeholder="50" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
@@ -246,6 +253,7 @@ export default function BookingPage() {
                       placeholder="Tell us more about your event, theme, dietary restrictions, etc."
                       className="resize-none"
                       {...field}
+                      value={field.value ?? ''}
                     />
                   </FormControl>
                   <FormDescription>
