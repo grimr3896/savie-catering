@@ -37,6 +37,7 @@ import {
   PlusCircle,
   UtensilsCrossed,
   Star,
+  Info,
 } from 'lucide-react';
 import Image from 'next/image';
 import {
@@ -46,6 +47,7 @@ import {
 import type { Service, Testimonial, GalleryImage } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
 import { useSiteContent } from '@/context/SiteContentContext';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const ImageUploader = ({
   onFileChange,
@@ -713,7 +715,26 @@ export default function ControllerPage() {
         </p>
       </div>
 
-      <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+      <Alert className="mt-12 max-w-4xl mx-auto">
+        <Info className="h-4 w-4" />
+        <AlertTitle>How this page works</AlertTitle>
+        <AlertDescription>
+          <p>
+            This page acts as a simple control panel for your website. Any
+            changes you make here—like uploading images, editing services, or
+            adding testimonials—will be reflected across the site immediately.
+          </p>
+          <p className="mt-2">
+            <strong>Important:</strong> Currently, all changes are saved
+            temporarily in your browser. If you refresh the page or use a
+            different browser, the content will revert to its original state. To
+            make changes permanent, the next step is to connect this to a
+            database.
+          </p>
+        </AlertDescription>
+      </Alert>
+
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* Site-Wide Imagery */}
         <Card className="col-span-1">
           <CardHeader>
