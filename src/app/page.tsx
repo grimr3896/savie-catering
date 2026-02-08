@@ -73,7 +73,7 @@ export default function Home() {
             </p>
           </div>
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.filter(s => s.category === 'package').slice(0, 3).map((service) => (
+            {services.filter(s => s.category === 'package').map((service) => (
               <Card
                 key={service.id}
                 className="flex flex-col items-center text-center hover:shadow-lg transition-shadow duration-300"
