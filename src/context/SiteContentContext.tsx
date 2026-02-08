@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const heroImagePlaceholder = PlaceHolderImages.find(
@@ -9,6 +9,10 @@ const heroImagePlaceholder = PlaceHolderImages.find(
 const aboutUsImagePlaceholder = PlaceHolderImages.find(
   (p) => p.id === 'about-us-image'
 );
+
+const HERO_IMAGE_STORAGE_KEY = 'cater-ease-heroImageUrl';
+const ABOUT_US_IMAGE_STORAGE_KEY = 'cater-ease-aboutUsImageUrl';
+
 
 type SiteContentContextType = {
   heroImageUrl: string;
@@ -29,13 +33,35 @@ export const SiteContentProvider = ({ children }: { children: ReactNode }) => {
     aboutUsImagePlaceholder?.imageUrl || ''
   );
 
+  useEffect(() => {
+    const storedHeroImage = localStorage.getItem(HERO_IMAGE_STORAGE_KEY);
+    if (storedHeroImage) {
+      setHeroImageUrl(storedHeroImage);
+    }
+    const storedAboutUsImage = localStorage.getItem(ABOUT_US_IMAGE_STORAGE_KEY);
+    if (storedAboutUsImage) {
+      setAboutUsImageUrl(storedAboutUsImage);
+    }
+  }, []);
+
+  const handleSetHeroImageUrl = (url: string) => {
+    localStorage.setItem(HERO_IMAGE_STORAGE_KEY, url);
+    setHeroImageUrl(url);
+  };
+
+  const handleSetAboutUsImageUrl = (url: string) => {
+    localStorage.setItem(ABOUT_US_IMAGE_STORAGE_KEY, url);
+    setAboutUsImageUrl(url);
+  };
+
+
   return (
     <SiteContentContext.Provider
       value={{
         heroImageUrl,
-        setHeroImageUrl,
+        setHeroImageUrl: handleSetHeroImageUrl,
         aboutUsImageUrl,
-        setAboutUsImageUrl,
+        setAboutUsImageUrl: handleSetAboutUsImageUrl,
       }}
     >
       {children}
