@@ -38,9 +38,10 @@ import {
   UtensilsCrossed,
 } from 'lucide-react';
 import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-images';
 import {
   services as initialServices,
+  guestServices,
   galleryImages,
   testimonials as initialTestimonials,
 } from '@/lib/data';
@@ -179,7 +180,7 @@ const ServiceEditDialog = ({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="service-price">Starting Price</Label>
+            <Label htmlFor="service-price">Starting Price (Ksh)</Label>
             <Input
               id="service-price"
               type="number"
@@ -277,7 +278,10 @@ export default function ControllerPage() {
   };
 
   // --- State for Services ---
-  const [services, setServices] = React.useState<Service[]>(initialServices);
+  const [services, setServices] = React.useState<Service[]>([
+    ...initialServices,
+    ...guestServices,
+  ]);
   const [isServiceDialogOpen, setServiceDialogOpen] = React.useState(false);
   const [editingService, setEditingService] = React.useState<
     Service | null | undefined
@@ -285,6 +289,13 @@ export default function ControllerPage() {
   const [serviceToDelete, setServiceToDelete] = React.useState<Service | null>(
     null
   );
+    
+  const getImageUrl = (
+    imageId: string | undefined
+  ): ImagePlaceholder | undefined => {
+    if (!imageId) return undefined;
+    return PlaceHolderImages.find((p) => p.id === imageId);
+  };
 
   const handleSaveService = (serviceData: {
     title: string;
@@ -456,48 +467,62 @@ export default function ControllerPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2 pt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {services.map((service) => (
-                  <Card key={service.id}>
-                    <CardHeader>
-                      <div className="flex items-center gap-2">
-                        <service.icon className="w-6 h-6 text-primary" />
-                        <h3 className="text-lg font-headline">
-                          {service.title}
-                        </h3>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground h-20">
-                        {service.description}
-                      </p>
-                      <p className="text-sm font-semibold mt-2">
-                        Starting from ${service.price}
-                      </p>
-                    </CardContent>
-                    <CardFooter className="flex justify-end gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setEditingService(service);
-                          setServiceDialogOpen(true);
-                        }}
-                      >
-                        <Edit className="w-4 h-4 mr-2" />
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-destructive hover:text-destructive"
-                        onClick={() => setServiceToDelete(service)}
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
+                {services.map((service) => {
+                  const image = getImageUrl(service.imageId);
+                  return (
+                    <Card key={service.id} className="flex flex-col overflow-hidden">
+                      {image && (
+                        <div className="relative h-40 w-full">
+                            <Image
+                                src={image.imageUrl}
+                                alt={image.description}
+                                data-ai-hint={image.imageHint}
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
+                      )}
+                      <CardHeader>
+                        <div className="flex items-center gap-2">
+                          <service.icon className="w-6 h-6 text-primary" />
+                          <h3 className="text-lg font-headline">
+                            {service.title}
+                          </h3>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="flex-grow">
+                        <p className="text-sm text-muted-foreground h-24">
+                          {service.description}
+                        </p>
+                        <p className="text-sm font-semibold mt-2">
+                          Starting from Ksh {service.price}
+                        </p>
+                      </CardContent>
+                      <CardFooter className="flex justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setEditingService(service);
+                            setServiceDialogOpen(true);
+                          }}
+                        >
+                          <Edit className="w-4 h-4 mr-2" />
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => setServiceToDelete(service)}
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Delete
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  );
+                })}
                 <div
                   onClick={() => {
                     setEditingService(null);

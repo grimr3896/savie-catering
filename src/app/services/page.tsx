@@ -71,7 +71,7 @@ export default function ServicesPage() {
                 </CardContent>
                 <CardFooter className="flex flex-col gap-4 pt-4">
                   <p className="text-sm text-muted-foreground">
-                    Starting from ${service.price}
+                    Starting from Ksh {service.price}
                   </p>
                   <Button asChild className="w-full">
                     <Link href="/about#contact">Inquire Now</Link>
@@ -125,7 +125,7 @@ export default function ServicesPage() {
                 </CardContent>
                 <CardFooter className="flex flex-col gap-4 pt-4">
                   <p className="text-sm text-muted-foreground">
-                    Starting from ${service.price}
+                    Starting from Ksh {service.price}
                   </p>
                   <Button asChild className="w-full">
                     <Link href="/booking">Book This Service</Link>
