@@ -2,8 +2,8 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import type { Service, GalleryImage, Testimonial } from '@/lib/definitions';
-import { services as initialServices, guestServices, galleryImages as initialGalleryImages, testimonials as initialTestimonials } from '@/lib/data';
+import type { Service, GalleryImage, Testimonial, TeamMember } from '@/lib/definitions';
+import { services as initialServices, guestServices, galleryImages as initialGalleryImages, testimonials as initialTestimonials, teamMembers as initialTeamMembers } from '@/lib/data';
 
 const heroImagePlaceholder = PlaceHolderImages.find(
   (p) => p.id === 'hero-image'
@@ -27,6 +27,8 @@ type SiteContentContextType = {
   setGalleryImages: React.Dispatch<React.SetStateAction<GalleryImage[]>>;
   testimonials: Testimonial[];
   setTestimonials: React.Dispatch<React.SetStateAction<Testimonial[]>>;
+  teamMembers: TeamMember[];
+  setTeamMembers: React.Dispatch<React.SetStateAction<TeamMember[]>>;
 };
 
 const SiteContentContext = createContext<SiteContentContextType | undefined>(
@@ -43,6 +45,7 @@ export const SiteContentProvider = ({ children }: { children: ReactNode }) => {
   const [services, setServices] = useState<Service[]>([...initialServices, ...guestServices]);
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>(initialGalleryImages);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(initialTestimonials);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialTeamMembers);
 
 
   useEffect(() => {
@@ -80,6 +83,8 @@ export const SiteContentProvider = ({ children }: { children: ReactNode }) => {
         setGalleryImages,
         testimonials,
         setTestimonials,
+        teamMembers,
+        setTeamMembers,
       }}
     >
       {children}

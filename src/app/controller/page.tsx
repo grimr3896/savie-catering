@@ -44,7 +44,12 @@ import {
   PlaceHolderImages,
   type ImagePlaceholder,
 } from '@/lib/placeholder-images';
-import type { Service, Testimonial, GalleryImage } from '@/lib/definitions';
+import type {
+  Service,
+  Testimonial,
+  GalleryImage,
+  TeamMember,
+} from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
 import { useSiteContent } from '@/context/SiteContentContext';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -117,11 +122,15 @@ const ImageUploader = ({
   );
 };
 
-const getImageUrlFromService = (service: Service | null | undefined): string | null => {
-    if (!service) return null;
-    const placeholderImage = PlaceHolderImages.find((p) => p.id === service.imageId);
-    return service.imageUrl || placeholderImage?.imageUrl || null;
-}
+const getImageUrlFromService = (
+  service: Service | null | undefined
+): string | null => {
+  if (!service) return null;
+  const placeholderImage = PlaceHolderImages.find(
+    (p) => p.id === service.imageId
+  );
+  return service.imageUrl || placeholderImage?.imageUrl || null;
+};
 
 const ServiceEditDialog = ({
   open,
@@ -177,7 +186,7 @@ const ServiceEditDialog = ({
       price: number;
       imageUrl?: string;
     } = { title, description, price: Number(price) };
-    
+
     const initialImageUrl = getImageUrlFromService(service);
 
     if (imagePreview && imagePreview !== initialImageUrl) {
@@ -446,6 +455,124 @@ const TestimonialEditDialog = ({
   );
 };
 
+const TeamMemberEditDialog = ({
+  open,
+  onOpenChange,
+  member,
+  onSave,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  member: TeamMember | null | undefined;
+  onSave: (memberData: {
+    name: string;
+    role: string;
+    imageUrl?: string;
+  }) => void;
+}) => {
+  const [name, setName] = React.useState('');
+  const [role, setRole] = React.useState('');
+  const [imageFile, setImageFile] = React.useState<File | null>(null);
+  const [imagePreview, setImagePreview] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (member) {
+      setName(member.name);
+      setRole(member.role);
+      setImagePreview(
+        member.imageUrl ||
+          `https://picsum.photos/seed/${member.imageSeed}/200/200`
+      );
+    } else {
+      setName('');
+      setRole('');
+      setImagePreview(null);
+    }
+    setImageFile(null); // Reset file on open
+  }, [member, open]);
+
+  React.useEffect(() => {
+    if (imageFile) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(imageFile);
+    }
+  }, [imageFile]);
+
+  const handleSaveClick = () => {
+    const saveData: { name: string; role: string; imageUrl?: string } = {
+      name,
+      role,
+    };
+
+    const initialImageUrl =
+      member?.imageUrl ||
+      (member?.imageSeed
+        ? `https://picsum.photos/seed/${member.imageSeed}/200/200`
+        : null);
+
+    if (imagePreview && imagePreview !== initialImageUrl) {
+      saveData.imageUrl = imagePreview;
+    }
+
+    onSave(saveData);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {member ? 'Edit Team Member' : 'Add New Team Member'}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto pr-4">
+          <div className="space-y-2">
+            <Label htmlFor="member-name">Name</Label>
+            <Input
+              id="member-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g., Jane Doe"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="member-role">Role</Label>
+            <Input
+              id="member-role"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              placeholder="e.g., Head Chef"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Image</Label>
+            {imagePreview && (
+              <div className="my-2 rounded-full w-32 h-32 mx-auto overflow-hidden relative">
+                <Image
+                  src={imagePreview}
+                  alt="Image preview"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            )}
+            <ImageUploader onFileChange={setImageFile} />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleSaveClick}>Save Member</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 export default function ControllerPage() {
   const { toast } = useToast();
   const {
@@ -459,6 +586,8 @@ export default function ControllerPage() {
     setGalleryImages,
     testimonials,
     setTestimonials,
+    teamMembers,
+    setTeamMembers,
   } = useSiteContent();
 
   const heroImagePlaceholder = PlaceHolderImages.find(
@@ -554,6 +683,15 @@ export default function ControllerPage() {
     Testimonial | null | undefined
   >(undefined);
 
+  // --- State for Team Members ---
+  const [isTeamMemberDialogOpen, setTeamMemberDialogOpen] =
+    React.useState(false);
+  const [editingTeamMember, setEditingTeamMember] = React.useState<
+    TeamMember | null | undefined
+  >(undefined);
+  const [teamMemberToDelete, setTeamMemberToDelete] =
+    React.useState<TeamMember | null>(null);
+
   const getImageUrl = (
     imageId: string | undefined
   ): ImagePlaceholder | undefined => {
@@ -631,7 +769,8 @@ export default function ControllerPage() {
     } else {
       const newImage: GalleryImage = {
         id: `gallery-image-${Date.now()}`,
-        src: imageData.src || `https://picsum.photos/seed/${Date.now()}/600/400`,
+        src:
+          imageData.src || `https://picsum.photos/seed/${Date.now()}/600/400`,
         alt: imageData.alt,
         aiHint: 'custom image',
       };
@@ -667,9 +806,7 @@ export default function ControllerPage() {
     if (editingTestimonial) {
       setTestimonials(
         testimonials.map((t) =>
-          t.id === editingTestimonial.id
-            ? { ...t, ...testimonialData }
-            : t
+          t.id === editingTestimonial.id ? { ...t, ...testimonialData } : t
         )
       );
       toast({
@@ -701,6 +838,60 @@ export default function ControllerPage() {
         description: `The testimonial by ${testimonialToDelete.name} has been removed.`,
       });
       setTestimonialToDelete(null);
+    }
+  };
+
+  const handleSaveTeamMember = (memberData: {
+    name: string;
+    role: string;
+    imageUrl?: string;
+  }) => {
+    if (editingTeamMember) {
+      setTeamMembers(
+        teamMembers.map((m) =>
+          m.id === editingTeamMember.id
+            ? {
+                ...m,
+                ...memberData,
+                imageSeed: memberData.imageUrl ? undefined : m.imageSeed, // clear imageSeed if new image uploaded
+              }
+            : m
+        )
+      );
+      toast({
+        title: 'Team Member Updated',
+        description: `${memberData.name} has been updated.`,
+      });
+    } else {
+      const newMember: TeamMember = {
+        id: Date.now(),
+        name: memberData.name,
+        role: memberData.role,
+        imageUrl: memberData.imageUrl,
+        imageSeed: memberData.imageUrl
+          ? undefined
+          : String(Math.floor(Math.random() * 1000) + 400),
+      };
+      setTeamMembers([newMember, ...teamMembers]);
+      toast({
+        title: 'Team Member Added',
+        description: `${memberData.name} has been added.`,
+      });
+    }
+    setTeamMemberDialogOpen(false);
+    setEditingTeamMember(undefined);
+  };
+
+  const confirmDeleteTeamMember = () => {
+    if (teamMemberToDelete) {
+      setTeamMembers(
+        teamMembers.filter((m) => m.id !== teamMemberToDelete.id)
+      );
+      toast({
+        title: 'Team Member Deleted',
+        description: `Team member ${teamMemberToDelete.name} has been removed.`,
+      });
+      setTeamMemberToDelete(null);
     }
   };
 
@@ -840,9 +1031,12 @@ export default function ControllerPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {services.map((service) => {
                   const placeholderImage = getImageUrl(service.imageId);
-                  const imageSrc = service.imageUrl || placeholderImage?.imageUrl;
-                  const imageAlt = placeholderImage?.description || service.title;
-                  const imageHint = placeholderImage?.imageHint || 'custom image';
+                  const imageSrc =
+                    service.imageUrl || placeholderImage?.imageUrl;
+                  const imageAlt =
+                    placeholderImage?.description || service.title;
+                  const imageHint =
+                    placeholderImage?.imageHint || 'custom image';
                   return (
                     <Card
                       key={service.id}
@@ -979,6 +1173,78 @@ export default function ControllerPage() {
             </div>
           </CardContent>
         </Card>
+        {/* Manage Team Members */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Manage Team</CardTitle>
+            <CardDescription>
+              Add, edit, or remove team members.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button
+              className="w-full"
+              onClick={() => {
+                setEditingTeamMember(null);
+                setTeamMemberDialogOpen(true);
+              }}
+            >
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add Team Member
+            </Button>
+            <div className="space-y-2 pt-4">
+              <h4 className="font-semibold">Current Team Members</h4>
+              <div className="max-h-64 overflow-y-auto space-y-2 pr-2">
+                {teamMembers.map((member) => (
+                  <div
+                    key={member.id}
+                    className="border rounded-lg p-2 flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <Image
+                        src={
+                          member.imageUrl ||
+                          `https://picsum.photos/seed/${member.imageSeed}/40/40`
+                        }
+                        alt={member.name}
+                        width={40}
+                        height={40}
+                        className="rounded-full flex-shrink-0"
+                        data-ai-hint="portrait person"
+                      />
+                      <div className="overflow-hidden">
+                        <p className="font-semibold truncate">{member.name}</p>
+                        <p className="text-sm text-muted-foreground truncate">
+                          {member.role}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setEditingTeamMember(member);
+                          setTeamMemberDialogOpen(true);
+                        }}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => setTeamMemberToDelete(member)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
       <ServiceEditDialog
         open={isServiceDialogOpen}
@@ -997,6 +1263,12 @@ export default function ControllerPage() {
         onOpenChange={setGalleryDialogOpen}
         image={editingGalleryImage}
         onSave={handleSaveGalleryImage}
+      />
+      <TeamMemberEditDialog
+        open={isTeamMemberDialogOpen}
+        onOpenChange={setTeamMemberDialogOpen}
+        member={editingTeamMember}
+        onSave={handleSaveTeamMember}
       />
       <AlertDialog
         open={!!serviceToDelete}
@@ -1065,6 +1337,29 @@ export default function ControllerPage() {
             <AlertDialogAction
               className="bg-destructive hover:bg-destructive/90"
               onClick={confirmDeleteTestimonial}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog
+        open={!!teamMemberToDelete}
+        onOpenChange={() => setTeamMemberToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the team
+              member "{teamMemberToDelete?.name}".
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive hover:bg-destructive/90"
+              onClick={confirmDeleteTeamMember}
             >
               Delete
             </AlertDialogAction>

@@ -31,12 +31,6 @@ import { useToast } from '@/hooks/use-toast';
 import { submitContactForm } from './actions';
 import { useSiteContent } from '@/context/SiteContentContext';
 
-const teamMembers = [
-  { name: 'Jane Doe', role: 'Founder & Head Chef', imageSeed: '301' },
-  { name: 'John Smith', role: 'Events Director', imageSeed: '302' },
-  { name: 'Emily White', role: 'Pastry Chef', imageSeed: '303' },
-];
-
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
   email: z.string().email('Invalid email address.'),
@@ -50,7 +44,7 @@ export default function AboutPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const { aboutUsImageUrl } = useSiteContent();
+  const { aboutUsImageUrl, teamMembers } = useSiteContent();
   const aboutUsImagePlaceholder = PlaceHolderImages.find(
     (img) => img.id === 'about-us-image'
   );
@@ -188,11 +182,14 @@ export default function AboutPage() {
           </h2>
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {teamMembers.map((member) => (
-              <Card key={member.name} className="text-center">
+              <Card key={member.id} className="text-center">
                 <CardContent className="p-6">
                   <div className="w-32 h-32 rounded-full mx-auto overflow-hidden">
                     <Image
-                      src={`https://picsum.photos/seed/${member.imageSeed}/200/200`}
+                      src={
+                        member.imageUrl ||
+                        `https://picsum.photos/seed/${member.imageSeed}/200/200`
+                      }
                       alt={member.name}
                       data-ai-hint="portrait person"
                       width={200}

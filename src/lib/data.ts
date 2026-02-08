@@ -9,7 +9,7 @@ import {
   Table,
   Soup,
 } from 'lucide-react';
-import type { Service, GalleryImage, Testimonial } from './definitions';
+import type { Service, GalleryImage, Testimonial, TeamMember } from './definitions';
 import { PlaceHolderImages } from './placeholder-images';
 
 export const services: Service[] = [
@@ -142,4 +142,10 @@ export const testimonials: Testimonial[] = [
       "I couldn't have asked for a better catering experience for my birthday. The team was so attentive, and the dessert table was a work of art. Thank you, SAVIE ROYAL!",
     rating: 5,
   },
+];
+
+export const teamMembers: TeamMember[] = [
+  { id: 1, name: 'Jane Doe', role: 'Founder & Head Chef', imageSeed: '301' },
+  { id: 2, name: 'John Smith', role: 'Events Director', imageSeed: '302' },
+  { id: 3, name: 'Emily White', role: 'Pastry Chef', imageSeed: '303' },
 ];

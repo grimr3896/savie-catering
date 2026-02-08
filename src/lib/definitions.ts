@@ -26,6 +26,14 @@ export type Testimonial = {
   rating: number;
 };
 
+export type TeamMember = {
+  id: number;
+  name: string;
+  role: string;
+  imageSeed?: string;
+  imageUrl?: string;
+};
+
 export type BookingRequest = {
   name: string;
   email: string;
