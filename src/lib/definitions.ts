@@ -6,6 +6,7 @@ export type Service = {
   description: string;
   icon: LucideIcon;
   price: number;
+  imageId?: string;
 };
 
 export type GalleryImage = {
