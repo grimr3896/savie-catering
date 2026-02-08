@@ -38,6 +38,9 @@ export default function Home() {
     if (!imageId) return undefined;
     return PlaceHolderImages.find((p) => p.id === imageId);
   };
+  
+  const cateringPackages = services.filter((s) => s.category === 'package');
+  const guestServices = services.filter((s) => s.category === 'guest');
 
   return (
     <div className="flex flex-col">
@@ -73,20 +76,24 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-headline font-semibold">
-              Our Services
+              Our Catering Services
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              We offer a range of catering services tailored to your needs.
-              Every detail is crafted with care to ensure your event is a
-              resounding success.
+              Whatever the occasion, SAVIE ROYAL provides exceptional food and
+              impeccable service. Explore our offerings to find the perfect fit
+              for your event.
             </p>
           </div>
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services
-              .filter((s) => s.category === 'package')
-              .map((service) => {
+
+          <div className="mt-16">
+            <h3 className="text-3xl font-headline font-semibold text-center mb-12">
+              Catering Packages
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {cateringPackages.map((service) => {
                 const imagePlaceholder = getImageUrl(service.imageId);
-                const imageSrc = service.imageUrl || imagePlaceholder?.imageUrl;
+                const imageSrc =
+                  service.imageUrl || imagePlaceholder?.imageUrl;
 
                 return (
                   <Card
@@ -97,7 +104,9 @@ export default function Home() {
                       <div className="relative h-48 w-full">
                         <Image
                           src={imageSrc}
-                          alt={imagePlaceholder?.description || service.title}
+                          alt={
+                            imagePlaceholder?.description || service.title
+                          }
                           data-ai-hint={
                             imagePlaceholder?.imageHint || 'custom image'
                           }
@@ -115,23 +124,85 @@ export default function Home() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="flex-grow text-center">
-                      <CardDescription>{service.description}</CardDescription>
+                      <CardDescription>
+                        {service.description}
+                      </CardDescription>
                     </CardContent>
-                    <CardFooter className="flex flex-col items-center justify-center pt-4">
+                    <CardFooter className="flex flex-col gap-4 pt-4">
                       <p className="text-sm text-muted-foreground">
                         Starting from Ksh {service.price}
                       </p>
+                      <Button asChild className="w-full">
+                        <Link href="/about#contact">Inquire Now</Link>
+                      </Button>
                     </CardFooter>
                   </Card>
                 );
               })}
+            </div>
           </div>
-          <div className="text-center mt-12">
-            <Button asChild variant="outline">
-              <Link href="/services">
-                Explore All Services <ArrowRight />
-              </Link>
-            </Button>
+
+          <div className="mt-24">
+            <div className="text-center max-w-3xl mx-auto">
+              <h3 className="text-3xl font-headline font-semibold">
+                Guest Services
+              </h3>
+              <p className="mt-4 text-lg text-muted-foreground">
+                Ensure your event runs smoothly with our professional on-site
+                staff and services.
+              </p>
+            </div>
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {guestServices.map((service) => {
+                const imagePlaceholder = getImageUrl(service.imageId);
+                const imageSrc =
+                  service.imageUrl || imagePlaceholder?.imageUrl;
+
+                return (
+                  <Card
+                    key={service.id}
+                    className="flex flex-col overflow-hidden hover:shadow-xl transition-shadow duration-300"
+                  >
+                    {imageSrc && (
+                      <div className="relative h-48 w-full">
+                        <Image
+                          src={imageSrc}
+                          alt={
+                            imagePlaceholder?.description || service.title
+                          }
+                          data-ai-hint={
+                            imagePlaceholder?.imageHint || 'custom image'
+                          }
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                    <CardHeader className="items-center text-center">
+                      <div className="bg-primary/10 p-4 rounded-full -mt-12 bg-background z-10 border">
+                        <service.icon className="w-10 h-10 text-primary" />
+                      </div>
+                      <CardTitle className="font-headline mt-4 text-2xl">
+                        {service.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-grow text-center">
+                      <CardDescription>
+                        {service.description}
+                      </CardDescription>
+                    </CardContent>
+                    <CardFooter className="flex flex-col gap-4 pt-4">
+                      <p className="text-sm text-muted-foreground">
+                        Starting from Ksh {service.price}
+                      </p>
+                      <Button asChild className="w-full">
+                        <Link href="/booking">Book This Service</Link>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>

@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 export function Footer() {
   const navLinks = [
     { href: '/about', label: 'About Us' },
-    { href: '/services', label: 'Services' },
     { href: '/gallery', label: 'Gallery' },
     { href: '/controller', label: 'Controller' },
   ];
