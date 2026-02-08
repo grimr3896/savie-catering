@@ -5,6 +5,13 @@ import { Facebook, Instagram, Twitter } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { useSiteContent } from '@/context/SiteContentContext';
+import type { SocialLink } from '@/lib/definitions';
+
+const socialIcons: Record<string, React.ElementType> = {
+    facebook: Facebook,
+    instagram: Instagram,
+    twitter: Twitter,
+}
 
 export function Footer() {
   const { socialLinks } = useSiteContent();
@@ -12,7 +19,7 @@ export function Footer() {
     { href: '/about', label: 'About Us' },
     { href: '/gallery', label: 'Gallery' },
   ];
-
+  
   return (
     <footer className="bg-background border-t">
       <div className="container mx-auto px-4 py-12">
@@ -24,39 +31,23 @@ export function Footer() {
               moments.
             </p>
             <div className="mt-4 flex space-x-2">
-              <Button variant="ghost" size="icon" asChild>
-                <a
-                  href={socialLinks.facebook}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  aria-label="Facebook"
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <Facebook />
-                </a>
-              </Button>
-              <Button variant="ghost" size="icon" asChild>
-                <a
-                  href={socialLinks.instagram}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  aria-label="Instagram"
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <Instagram />
-                </a>
-              </Button>
-              <Button variant="ghost" size="icon" asChild>
-                <a
-                  href={socialLinks.twitter}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  aria-label="Twitter"
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <Twitter />
-                </a>
-              </Button>
+              {socialLinks.filter(l => l.is_active).map(link => {
+                  const Icon = socialIcons[link.platform];
+                  if (!Icon) return null;
+                  return (
+                    <Button variant="ghost" size="icon" asChild key={link.platform}>
+                        <a
+                        href={link.url}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        aria-label={link.platform}
+                        className="text-muted-foreground hover:text-foreground"
+                        >
+                            <Icon />
+                        </a>
+                    </Button>
+                  )
+              })}
             </div>
           </div>
 

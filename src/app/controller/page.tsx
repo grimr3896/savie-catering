@@ -52,9 +52,12 @@ import type {
   GalleryImage,
   TeamMember,
   SocialLinks,
+  SocialLink,
 } from '@/lib/definitions';
 import { useToast } from '@/hooks/use-toast';
 import { useSiteContent } from '@/context/SiteContentContext';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const ImageUploader = ({
   onFileChange,
@@ -131,7 +134,7 @@ const getImageUrlFromService = (
   const placeholderImage = PlaceHolderImages.find(
     (p) => p.id === service.imageId
   );
-  return service.imageUrl || placeholderImage?.imageUrl || null;
+  return service.image_url || placeholderImage?.imageUrl || null;
 };
 
 const ServiceEditDialog = ({
@@ -143,29 +146,30 @@ const ServiceEditDialog = ({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   service: Service | null | undefined;
-  onSave: (serviceData: {
-    title: string;
-    description: string;
-    price: number;
-    imageUrl?: string;
-  }) => void;
+  onSave: (serviceData: Partial<Service>) => void;
 }) => {
   const [title, setTitle] = React.useState('');
-  const [description, setDescription] = React.useState('');
+  const [shortDescription, setShortDescription] = React.useState('');
   const [price, setPrice] = React.useState(0);
+  const [displayOrder, setDisplayOrder] = React.useState(0);
+  const [isActive, setIsActive] = React.useState(true);
   const [imageFile, setImageFile] = React.useState<File | null>(null);
   const [imagePreview, setImagePreview] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (service) {
       setTitle(service.title);
-      setDescription(service.description);
+      setShortDescription(service.short_description);
       setPrice(service.price);
+      setDisplayOrder(service.display_order);
+      setIsActive(service.is_active);
       setImagePreview(getImageUrlFromService(service));
     } else {
       setTitle('');
-      setDescription('');
+      setShortDescription('');
       setPrice(0);
+      setDisplayOrder(0);
+      setIsActive(true);
       setImagePreview(null);
     }
     setImageFile(null); // Reset file on open
@@ -182,17 +186,18 @@ const ServiceEditDialog = ({
   }, [imageFile]);
 
   const handleSaveClick = () => {
-    const saveData: {
-      title: string;
-      description: string;
-      price: number;
-      imageUrl?: string;
-    } = { title, description, price: Number(price) };
+    const saveData: Partial<Service> = { 
+        title, 
+        short_description: shortDescription, 
+        price: Number(price),
+        display_order: Number(displayOrder),
+        is_active: isActive
+    };
 
     const initialImageUrl = getImageUrlFromService(service);
 
     if (imagePreview && imagePreview !== initialImageUrl) {
-      saveData.imageUrl = imagePreview;
+      saveData.image_url = imagePreview;
     }
 
     onSave(saveData);
@@ -217,23 +222,38 @@ const ServiceEditDialog = ({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="service-description">Description</Label>
+            <Label htmlFor="service-description">Short Description</Label>
             <Textarea
               id="service-description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={shortDescription}
+              onChange={(e) => setShortDescription(e.target.value)}
               placeholder="Describe the service..."
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="service-price">Starting Price (Ksh)</Label>
-            <Input
-              id="service-price"
-              type="number"
-              value={price}
-              onChange={(e) => setPrice(Number(e.target.value))}
-              placeholder="e.g., 1000"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="service-price">Starting Price ({service?.currency || 'Ksh'})</Label>
+              <Input
+                id="service-price"
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(Number(e.target.value))}
+                placeholder="e.g., 1000"
+              />
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="service-display-order">Display Order</Label>
+              <Input
+                id="service-display-order"
+                type="number"
+                value={displayOrder}
+                onChange={(e) => setDisplayOrder(Number(e.target.value))}
+              />
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch id="service-active" checked={isActive} onCheckedChange={setIsActive} />
+            <Label htmlFor="service-active">Service is Active</Label>
           </div>
           <div className="space-y-2">
             <Label>Image</Label>
@@ -270,18 +290,27 @@ const GalleryEditDialog = ({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   image: GalleryImage | null | undefined;
-  onSave: (imageData: { alt: string; src?: string }) => void;
+  onSave: (imageData: Partial<GalleryImage>) => void;
 }) => {
-  const [alt, setAlt] = React.useState('');
+  const [caption, setCaption] = React.useState('');
+  const [eventType, setEventType] = React.useState<GalleryImage['event_type']>('other');
+  const [displayOrder, setDisplayOrder] = React.useState(0);
+  const [isFeatured, setIsFeatured] = React.useState(false);
   const [imageFile, setImageFile] = React.useState<File | null>(null);
   const [imagePreview, setImagePreview] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (image) {
-      setAlt(image.alt);
-      setImagePreview(image.src); // Show current image
+      setCaption(image.caption);
+      setImagePreview(image.image_url);
+      setEventType(image.event_type);
+      setDisplayOrder(image.display_order);
+      setIsFeatured(image.is_featured);
     } else {
-      setAlt('');
+      setCaption('');
+      setEventType('other');
+      setDisplayOrder(0);
+      setIsFeatured(false);
       setImagePreview(null);
     }
     setImageFile(null); // Reset file on open
@@ -298,9 +327,9 @@ const GalleryEditDialog = ({
   }, [imageFile]);
 
   const handleSaveClick = () => {
-    const saveData: { alt: string; src?: string } = { alt };
-    if (imagePreview && imagePreview !== image?.src) {
-      saveData.src = imagePreview;
+    const saveData: Partial<GalleryImage> = { caption, event_type: eventType, display_order: Number(displayOrder), is_featured: isFeatured };
+    if (imagePreview && imagePreview !== image?.image_url) {
+      saveData.image_url = imagePreview;
     }
     onSave(saveData);
   };
@@ -318,10 +347,39 @@ const GalleryEditDialog = ({
             <Label htmlFor="gallery-alt">Image Caption</Label>
             <Input
               id="gallery-alt"
-              value={alt}
-              onChange={(e) => setAlt(e.target.value)}
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
               placeholder="e.g., A beautiful summer wedding"
             />
+          </div>
+          <div className='grid grid-cols-2 gap-4'>
+            <div className="space-y-2">
+                <Label htmlFor="gallery-event-type">Event Type</Label>
+                <Select value={eventType} onValueChange={(v) => setEventType(v as GalleryImage['event_type'])}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="wedding">Wedding</SelectItem>
+                        <SelectItem value="corporate">Corporate</SelectItem>
+                        <SelectItem value="private-party">Private Party</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="gallery-display-order">Display Order</Label>
+              <Input
+                id="gallery-display-order"
+                type="number"
+                value={displayOrder}
+                onChange={(e) => setDisplayOrder(Number(e.target.value))}
+              />
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch id="gallery-featured" checked={isFeatured} onCheckedChange={setIsFeatured} />
+            <Label htmlFor="gallery-featured">Featured Image</Label>
           </div>
           <div className="space-y-2">
             <Label>Image</Label>
@@ -358,34 +416,32 @@ const TestimonialEditDialog = ({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   testimonial: Testimonial | null | undefined;
-  onSave: (testimonialData: {
-    name: string;
-    event: string;
-    quote: string;
-    rating: number;
-  }) => void;
+  onSave: (testimonialData: Partial<Testimonial>) => void;
 }) => {
-  const [name, setName] = React.useState('');
+  const [clientName, setClientName] = React.useState('');
   const [event, setEvent] = React.useState('');
   const [quote, setQuote] = React.useState('');
   const [rating, setRating] = React.useState(5);
+  const [isFeatured, setIsFeatured] = React.useState(true);
 
   React.useEffect(() => {
     if (testimonial) {
-      setName(testimonial.name);
+      setClientName(testimonial.client_name);
       setEvent(testimonial.event);
       setQuote(testimonial.quote);
       setRating(testimonial.rating);
+      setIsFeatured(testimonial.is_featured);
     } else {
-      setName('');
+      setClientName('');
       setEvent('');
       setQuote('');
       setRating(5);
+      setIsFeatured(true);
     }
   }, [testimonial, open]);
 
   const handleSaveClick = () => {
-    onSave({ name, event, quote, rating });
+    onSave({ client_name: clientName, event, quote, rating: Number(rating), is_featured: isFeatured });
   };
 
   return (
@@ -401,8 +457,8 @@ const TestimonialEditDialog = ({
             <Label htmlFor="testimonial-name">Client Name</Label>
             <Input
               id="testimonial-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={clientName}
+              onChange={(e) => setClientName(e.target.value)}
               placeholder="Client Name"
             />
           </div>
@@ -445,6 +501,10 @@ const TestimonialEditDialog = ({
               ))}
             </div>
           </div>
+           <div className="flex items-center space-x-2">
+            <Switch id="testimonial-featured" checked={isFeatured} onCheckedChange={setIsFeatured} />
+            <Label htmlFor="testimonial-featured">Featured Testimonial</Label>
+          </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
@@ -466,14 +526,13 @@ const TeamMemberEditDialog = ({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   member: TeamMember | null | undefined;
-  onSave: (memberData: {
-    name: string;
-    role: string;
-    imageUrl?: string;
-  }) => void;
+  onSave: (memberData: Partial<TeamMember>) => void;
 }) => {
   const [name, setName] = React.useState('');
   const [role, setRole] = React.useState('');
+  const [bio, setBio] = React.useState('');
+  const [displayOrder, setDisplayOrder] = React.useState(0);
+  const [isActive, setIsActive] = React.useState(true);
   const [imageFile, setImageFile] = React.useState<File | null>(null);
   const [imagePreview, setImagePreview] = React.useState<string | null>(null);
 
@@ -481,13 +540,19 @@ const TeamMemberEditDialog = ({
     if (member) {
       setName(member.name);
       setRole(member.role);
+      setBio(member.bio);
+      setDisplayOrder(member.display_order);
+      setIsActive(member.is_active);
       setImagePreview(
-        member.imageUrl ||
+        member.photo_url ||
           `https://picsum.photos/seed/${member.imageSeed}/200/200`
       );
     } else {
       setName('');
       setRole('');
+      setBio('');
+      setDisplayOrder(0);
+      setIsActive(true);
       setImagePreview(null);
     }
     setImageFile(null); // Reset file on open
@@ -504,19 +569,22 @@ const TeamMemberEditDialog = ({
   }, [imageFile]);
 
   const handleSaveClick = () => {
-    const saveData: { name: string; role: string; imageUrl?: string } = {
+    const saveData: Partial<TeamMember> = {
       name,
       role,
+      bio,
+      display_order: Number(displayOrder),
+      is_active: isActive
     };
 
     const initialImageUrl =
-      member?.imageUrl ||
+      member?.photo_url ||
       (member?.imageSeed
         ? `https://picsum.photos/seed/${member.imageSeed}/200/200`
         : null);
 
     if (imagePreview && imagePreview !== initialImageUrl) {
-      saveData.imageUrl = imagePreview;
+      saveData.photo_url = imagePreview;
     }
 
     onSave(saveData);
@@ -549,6 +617,28 @@ const TeamMemberEditDialog = ({
               placeholder="e.g., Head Chef"
             />
           </div>
+           <div className="space-y-2">
+            <Label htmlFor="member-bio">Bio</Label>
+            <Textarea
+              id="member-bio"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="Short bio..."
+            />
+          </div>
+          <div className="space-y-2">
+              <Label htmlFor="member-display-order">Display Order</Label>
+              <Input
+                id="member-display-order"
+                type="number"
+                value={displayOrder}
+                onChange={(e) => setDisplayOrder(Number(e.target.value))}
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+                <Switch id="member-active" checked={isActive} onCheckedChange={setIsActive} />
+                <Label htmlFor="member-active">Team Member is Active</Label>
+            </div>
           <div className="space-y-2">
             <Label>Image</Label>
             {imagePreview && (
@@ -574,6 +664,12 @@ const TeamMemberEditDialog = ({
     </Dialog>
   );
 };
+
+const socialIcons: Record<string, React.ElementType> = {
+    facebook: Facebook,
+    instagram: Instagram,
+    twitter: Twitter,
+}
 
 export default function ControllerPage() {
   const { toast } = useToast();
@@ -702,6 +798,13 @@ export default function ControllerPage() {
   React.useEffect(() => {
     setCurrentSocialLinks(socialLinks);
   }, [socialLinks]);
+  
+  const handleSocialLinkChange = (platform: SocialLink['platform'], key: keyof SocialLink, value: any) => {
+    const newLinks = currentSocialLinks.map(link => 
+        link.platform === platform ? { ...link, [key]: value } : link
+    );
+    setCurrentSocialLinks(newLinks);
+  }
 
   const handleSaveSocialLinks = () => {
     setSocialLinks(currentSocialLinks);
@@ -718,12 +821,7 @@ export default function ControllerPage() {
     return PlaceHolderImages.find((p) => p.id === imageId);
   };
 
-  const handleSaveService = (serviceData: {
-    title: string;
-    description: string;
-    price: number;
-    imageUrl?: string;
-  }) => {
+  const handleSaveService = (serviceData: Partial<Service>) => {
     if (editingService) {
       setServices(
         services.map((s) =>
@@ -731,7 +829,7 @@ export default function ControllerPage() {
             ? {
                 ...s,
                 ...serviceData,
-                imageId: serviceData.imageUrl ? undefined : s.imageId,
+                imageId: serviceData.image_url ? undefined : s.imageId,
               }
             : s
         )
@@ -743,17 +841,21 @@ export default function ControllerPage() {
     } else {
       const newService: Service = {
         id: Date.now(),
-        title: serviceData.title,
-        description: serviceData.description,
-        price: serviceData.price,
-        imageUrl: serviceData.imageUrl,
+        title: serviceData.title || "New Service",
+        short_description: serviceData.short_description || "",
+        long_description: serviceData.long_description || "",
+        price: serviceData.price || 0,
+        currency: 'Ksh',
+        is_active: serviceData.is_active !== undefined ? serviceData.is_active : true,
+        display_order: serviceData.display_order || 99,
+        image_url: serviceData.image_url,
         icon: UtensilsCrossed, // Default icon for new services
         category: 'package', // Default category
       };
       setServices([newService, ...services]);
       toast({
         title: 'Service Added',
-        description: `${serviceData.title} has been added.`,
+        description: `${newService.title} has been added.`,
       });
     }
     setServiceDialogOpen(false);
@@ -771,10 +873,7 @@ export default function ControllerPage() {
     }
   };
 
-  const handleSaveGalleryImage = (imageData: {
-    alt: string;
-    src?: string;
-  }) => {
+  const handleSaveGalleryImage = (imageData: Partial<GalleryImage>) => {
     if (editingGalleryImage) {
       setGalleryImages(
         galleryImages.map((img) =>
@@ -788,10 +887,13 @@ export default function ControllerPage() {
     } else {
       const newImage: GalleryImage = {
         id: `gallery-image-${Date.now()}`,
-        src:
-          imageData.src || `https://picsum.photos/seed/${Date.now()}/600/400`,
-        alt: imageData.alt,
-        aiHint: 'custom image',
+        image_url:
+          imageData.image_url || `https://picsum.photos/seed/${Date.now()}/600/400`,
+        caption: imageData.caption || "New Image",
+        event_type: imageData.event_type || 'other',
+        created_at: new Date().toISOString(),
+        display_order: imageData.display_order || 99,
+        is_featured: imageData.is_featured !== undefined ? imageData.is_featured : false
       };
       setGalleryImages([newImage, ...galleryImages]);
       toast({
@@ -816,12 +918,7 @@ export default function ControllerPage() {
     }
   };
 
-  const handleSaveTestimonial = (testimonialData: {
-    name: string;
-    event: string;
-    quote: string;
-    rating: number;
-  }) => {
+  const handleSaveTestimonial = (testimonialData: Partial<Testimonial>) => {
     if (editingTestimonial) {
       setTestimonials(
         testimonials.map((t) =>
@@ -830,17 +927,23 @@ export default function ControllerPage() {
       );
       toast({
         title: 'Testimonial Updated',
-        description: `The testimonial from ${testimonialData.name} has been updated.`,
+        description: `The testimonial from ${testimonialData.client_name} has been updated.`,
       });
     } else {
       const newTestimonial: Testimonial = {
         id: Date.now(),
-        ...testimonialData,
+        client_name: testimonialData.client_name || "Anonymous",
+        event: testimonialData.event || "Event",
+        quote: testimonialData.quote || "",
+        rating: testimonialData.rating || 5,
+        source: 'Manual',
+        is_featured: testimonialData.is_featured !== undefined ? testimonialData.is_featured : true,
+        created_at: new Date().toISOString(),
       };
       setTestimonials([newTestimonial, ...testimonials]);
       toast({
         title: 'Testimonial Added',
-        description: `The testimonial from ${testimonialData.name} has been added.`,
+        description: `The testimonial from ${newTestimonial.client_name} has been added.`,
       });
     }
     setTestimonialDialogOpen(false);
@@ -854,17 +957,13 @@ export default function ControllerPage() {
       );
       toast({
         title: 'Testimonial Deleted',
-        description: `The testimonial by ${testimonialToDelete.name} has been removed.`,
+        description: `The testimonial by ${testimonialToDelete.client_name} has been removed.`,
       });
       setTestimonialToDelete(null);
     }
   };
 
-  const handleSaveTeamMember = (memberData: {
-    name: string;
-    role: string;
-    imageUrl?: string;
-  }) => {
+  const handleSaveTeamMember = (memberData: Partial<TeamMember>) => {
     if (editingTeamMember) {
       setTeamMembers(
         teamMembers.map((m) =>
@@ -872,7 +971,7 @@ export default function ControllerPage() {
             ? {
                 ...m,
                 ...memberData,
-                imageSeed: memberData.imageUrl ? undefined : m.imageSeed, // clear imageSeed if new image uploaded
+                imageSeed: memberData.photo_url ? undefined : m.imageSeed, // clear imageSeed if new image uploaded
               }
             : m
         )
@@ -884,17 +983,20 @@ export default function ControllerPage() {
     } else {
       const newMember: TeamMember = {
         id: Date.now(),
-        name: memberData.name,
-        role: memberData.role,
-        imageUrl: memberData.imageUrl,
-        imageSeed: memberData.imageUrl
+        name: memberData.name || "New Member",
+        role: memberData.role || "Role",
+        bio: memberData.bio || "",
+        photo_url: memberData.photo_url,
+        is_active: memberData.is_active !== undefined ? memberData.is_active : true,
+        display_order: memberData.display_order || 99,
+        imageSeed: memberData.photo_url
           ? undefined
           : String(Math.floor(Math.random() * 1000) + 400),
       };
       setTeamMembers([newMember, ...teamMembers]);
       toast({
         title: 'Team Member Added',
-        description: `${memberData.name} has been added.`,
+        description: `${newMember.name} has been added.`,
       });
     }
     setTeamMemberDialogOpen(false);
@@ -981,48 +1083,26 @@ export default function ControllerPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="facebook-url" className="flex items-center gap-2"><Facebook className='w-4 h-4'/> Facebook URL</Label>
-                <Input
-                  id="facebook-url"
-                  value={currentSocialLinks.facebook}
-                  onChange={(e) =>
-                    setCurrentSocialLinks({
-                      ...currentSocialLinks,
-                      facebook: e.target.value,
-                    })
-                  }
-                  placeholder="https://facebook.com/your-page"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="instagram-url" className="flex items-center gap-2"><Instagram className='w-4 h-4'/> Instagram URL</Label>
-                <Input
-                  id="instagram-url"
-                  value={currentSocialLinks.instagram}
-                  onChange={(e) =>
-                    setCurrentSocialLinks({
-                      ...currentSocialLinks,
-                      instagram: e.target.value,
-                    })
-                  }
-                  placeholder="https://instagram.com/your-handle"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="twitter-url" className="flex items-center gap-2"><Twitter className='w-4 h-4'/> Twitter URL</Label>
-                <Input
-                  id="twitter-url"
-                  value={currentSocialLinks.twitter}
-                  onChange={(e) =>
-                    setCurrentSocialLinks({
-                      ...currentSocialLinks,
-                      twitter: e.target.value,
-                    })
-                  }
-                  placeholder="https://twitter.com/your-handle"
-                />
-              </div>
+              {currentSocialLinks.map(link => {
+                const Icon = socialIcons[link.platform];
+                return (
+                    <div key={link.platform} className="space-y-2">
+                        <Label htmlFor={`${link.platform}-url`} className="flex items-center gap-2 capitalize"><Icon className='w-4 h-4'/> {link.platform} URL</Label>
+                        <Input
+                        id={`${link.platform}-url`}
+                        value={link.url}
+                        onChange={(e) =>
+                            handleSocialLinkChange(link.platform, 'url', e.target.value)
+                        }
+                        placeholder={`https://...`}
+                        />
+                        <div className="flex items-center space-x-2">
+                            <Switch id={`${link.platform}-active`} checked={link.is_active} onCheckedChange={(checked) => handleSocialLinkChange(link.platform, 'is_active', checked)} />
+                            <Label htmlFor={`${link.platform}-active`}>Show on site</Label>
+                        </div>
+                    </div>
+                )
+              })}
             </CardContent>
             <CardFooter>
               <Button className="w-full" onClick={handleSaveSocialLinks}>
@@ -1050,21 +1130,20 @@ export default function ControllerPage() {
               <div className="space-y-2 pt-4">
                 <h4 className="font-semibold">Current Gallery Images</h4>
                 <div className="max-h-96 overflow-y-auto space-y-2 pr-2">
-                  {galleryImages.map((image) => (
+                  {galleryImages.sort((a,b) => a.display_order - b.display_order).map((image) => (
                     <div
                       key={image.id}
                       className="border rounded-lg p-2 flex items-center justify-between"
                     >
                       <div className="flex items-center gap-2 overflow-hidden">
                         <Image
-                          src={image.src}
-                          alt={image.alt}
+                          src={image.image_url}
+                          alt={image.caption}
                           width={40}
                           height={40}
                           className="rounded flex-shrink-0"
-                          data-ai-hint={image.aiHint}
                         />
-                        <span className="text-sm truncate">{image.alt}</span>
+                        <span className="text-sm truncate">{image.caption}</span>
                       </div>
                       <div className="flex gap-2 flex-shrink-0">
                         <Button
@@ -1105,14 +1184,13 @@ export default function ControllerPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2 pt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {services.map((service) => {
+                {services.filter(s => s.is_active).sort((a,b) => a.display_order - b.display_order).map((service) => {
                   const placeholderImage = getImageUrl(service.imageId);
                   const imageSrc =
-                    service.imageUrl || placeholderImage?.imageUrl;
+                    service.image_url || placeholderImage?.imageUrl;
                   const imageAlt =
                     placeholderImage?.description || service.title;
-                  const imageHint =
-                    placeholderImage?.imageHint || 'custom image';
+                  
                   return (
                     <Card
                       key={service.id}
@@ -1123,7 +1201,6 @@ export default function ControllerPage() {
                           <Image
                             src={imageSrc}
                             alt={imageAlt}
-                            data-ai-hint={imageHint}
                             fill
                             className="object-cover"
                           />
@@ -1139,10 +1216,10 @@ export default function ControllerPage() {
                       </CardHeader>
                       <CardContent className="flex-grow">
                         <p className="text-sm text-muted-foreground h-24">
-                          {service.description}
+                          {service.short_description}
                         </p>
                         <p className="text-sm font-semibold mt-2">
-                          Starting from Ksh {service.price}
+                          Starting from {service.currency} {service.price}
                         </p>
                       </CardContent>
                       <CardFooter className="flex justify-end gap-2">
@@ -1218,7 +1295,7 @@ export default function ControllerPage() {
                     className="border rounded-lg p-3 flex items-center justify-between"
                   >
                     <div className="overflow-hidden">
-                      <p className="font-semibold">{testimonial.name}</p>
+                      <p className="font-semibold">{testimonial.client_name}</p>
                       <p className="text-sm text-muted-foreground truncate">
                         "{testimonial.quote}"
                       </p>
@@ -1271,7 +1348,7 @@ export default function ControllerPage() {
             <div className="space-y-2 pt-4">
               <h4 className="font-semibold">Current Team Members</h4>
               <div className="max-h-64 overflow-y-auto space-y-2 pr-2">
-                {teamMembers.map((member) => (
+                {teamMembers.sort((a,b) => a.display_order - b.display_order).map((member) => (
                   <div
                     key={member.id}
                     className="border rounded-lg p-2 flex items-center justify-between"
@@ -1279,7 +1356,7 @@ export default function ControllerPage() {
                     <div className="flex items-center gap-3 overflow-hidden">
                       <Image
                         src={
-                          member.imageUrl ||
+                          member.photo_url ||
                           `https://picsum.photos/seed/${member.imageSeed}/40/40`
                         }
                         alt={member.name}
@@ -1381,7 +1458,7 @@ export default function ControllerPage() {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              gallery image with caption "{galleryImageToDelete?.alt}".
+              gallery image with caption "{galleryImageToDelete?.caption}".
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -1405,7 +1482,7 @@ export default function ControllerPage() {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              testimonial by "{testimonialToDelete?.name}".
+              testimonial by "{testimonialToDelete?.client_name}".
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

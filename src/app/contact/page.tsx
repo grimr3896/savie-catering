@@ -30,6 +30,12 @@ const contactSchema = z.object({
 
 type ContactFormValues = z.infer<typeof contactSchema>;
 
+const socialIcons: Record<string, React.ElementType> = {
+    facebook: Facebook,
+    instagram: Instagram,
+    twitter: Twitter,
+}
+
 export default function ContactPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -212,54 +218,28 @@ export default function ContactPage() {
                     </a>
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <Facebook className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Facebook</h4>
-                    <a
-                      href={socialLinks.facebook}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-primary"
-                    >
-                      Follow on Facebook
-                    </a>
-                  </div>
-                </div>
-                 <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <Instagram className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Instagram</h4>
-                    <a
-                      href={socialLinks.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-primary"
-                    >
-                      Follow on Instagram
-                    </a>
-                  </div>
-                </div>
-                 <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <Twitter className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Twitter</h4>
-                    <a
-                      href={socialLinks.twitter}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-primary"
-                    >
-                      Follow on Twitter
-                    </a>
-                  </div>
-                </div>
+                 {socialLinks.filter(l => l.is_active).map(link => {
+                  const Icon = socialIcons[link.platform];
+                  if (!Icon) return null;
+                  return (
+                    <div className="flex items-start gap-4" key={link.platform}>
+                      <div className="bg-primary/10 p-3 rounded-full">
+                        <Icon className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold capitalize">{link.platform}</h4>
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary"
+                        >
+                          Follow on {link.platform}
+                        </a>
+                      </div>
+                    </div>
+                  )
+                })}
               </CardContent>
             </Card>
           </div>

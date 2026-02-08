@@ -68,7 +68,7 @@ export default function Home() {
     }
   };
 
-  const galleryPreviewImages = galleryImages.slice(0, 4);
+  const galleryPreviewImages = galleryImages.filter(g => g.is_featured).slice(0, 4);
 
   const getImageUrl = (
     imageId: string | undefined
@@ -83,9 +83,10 @@ export default function Home() {
 
   const filteredServices = services.filter(
     (service) =>
-      service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      service.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      service.is_active &&
+      (service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      service.short_description.toLowerCase().includes(searchQuery.toLowerCase()))
+  ).sort((a,b) => a.display_order - b.display_order);
 
   const cateringPackages = filteredServices.filter(
     (s) => s.category === 'package'
@@ -167,7 +168,7 @@ export default function Home() {
                     {cateringPackages.map((service) => {
                       const imagePlaceholder = getImageUrl(service.imageId);
                       const imageSrc =
-                        service.imageUrl || imagePlaceholder?.imageUrl;
+                        service.image_url || imagePlaceholder?.imageUrl;
 
                       return (
                         <Card
@@ -199,12 +200,12 @@ export default function Home() {
                           </CardHeader>
                           <CardContent className="flex-grow text-center">
                             <CardDescription>
-                              {service.description}
+                              {service.short_description}
                             </CardDescription>
                           </CardContent>
                           <CardFooter className="flex flex-col gap-4 pt-4">
                             <p className="text-sm text-muted-foreground">
-                              Starting from Ksh {service.price}
+                              Starting from {service.currency} {service.price}
                             </p>
                             <Button asChild className="w-full">
                               <Link href="/about#contact">Inquire Now</Link>
@@ -232,7 +233,7 @@ export default function Home() {
                     {guestServices.map((service) => {
                       const imagePlaceholder = getImageUrl(service.imageId);
                       const imageSrc =
-                        service.imageUrl || imagePlaceholder?.imageUrl;
+                        service.image_url || imagePlaceholder?.imageUrl;
 
                       return (
                         <Card
@@ -264,12 +265,12 @@ export default function Home() {
                           </CardHeader>
                           <CardContent className="flex-grow text-center">
                             <CardDescription>
-                              {service.description}
+                              {service.short_description}
                             </CardDescription>
                           </CardContent>
                           <CardFooter className="flex flex-col gap-4 pt-4">
                             <p className="text-sm text-muted-foreground">
-                              Starting from Ksh {service.price}
+                              Starting from {service.currency} {service.price}
                             </p>
                             <Button asChild className="w-full">
                               <Link href="/booking">Book This Service</Link>
@@ -310,9 +311,8 @@ export default function Home() {
                 className="relative aspect-square rounded-lg overflow-hidden group"
               >
                 <Image
-                  src={img.src as string}
-                  alt={img.alt}
-                  data-ai-hint={img.aiHint}
+                  src={img.image_url}
+                  alt={img.caption}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                 />
@@ -348,7 +348,7 @@ export default function Home() {
             className="w-full max-w-4xl mx-auto mt-12"
           >
             <CarouselContent>
-              {testimonials.map((testimonial) => (
+              {testimonials.filter(t => t.is_featured).map((testimonial) => (
                 <CarouselItem key={testimonial.id}>
                   <Card className="border-none shadow-none bg-transparent">
                     <CardContent className="flex flex-col items-center text-center p-6">
@@ -368,7 +368,7 @@ export default function Home() {
                           />
                         ))}
                       </div>
-                      <p className="mt-2 font-semibold">{testimonial.name}</p>
+                      <p className="mt-2 font-semibold">{testimonial.client_name}</p>
                       <p className="text-sm text-muted-foreground">
                         {testimonial.event}
                       </p>

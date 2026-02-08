@@ -32,6 +32,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { submitContactForm } from './actions';
 import { useSiteContent } from '@/context/SiteContentContext';
+import type { SocialLink } from '@/lib/definitions';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -41,6 +42,12 @@ const contactSchema = z.object({
 });
 
 type ContactFormValues = z.infer<typeof contactSchema>;
+
+const socialIcons: Record<string, React.ElementType> = {
+    facebook: Facebook,
+    instagram: Instagram,
+    twitter: Twitter,
+}
 
 export default function AboutPage() {
   const { toast } = useToast();
@@ -80,6 +87,12 @@ export default function AboutPage() {
       });
     }
   }
+
+  const getSocialLink = (platform: 'facebook' | 'instagram' | 'twitter'): SocialLink | undefined => {
+    return socialLinks.find(link => link.platform === platform);
+  }
+
+
   return (
     <div className="bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-16 md:py-24">
@@ -96,14 +109,7 @@ export default function AboutPage() {
           <div className="order-2 md:order-1">
             <h2 className="text-3xl font-headline font-semibold">Our Story</h2>
             <p className="mt-4 text-muted-foreground">
-              SAVIE ROYAL was born from a simple idea: to bring
-              restaurant-quality culinary experiences to private events. What
-              started as a small operation out of a home kitchen has grown into
-              one of the city's most beloved catering companies, known for our
-              creative menus, attention to detail, and unwavering commitment to
-              our clients. We believe that food is more than just sustenance;
-              it's a way to connect, celebrate, and create lasting memories.
-              That philosophy is at the heart of everything we do.
+              SAVIE ROYAL was born from a simple idea: to bring restaurant-quality culinary experiences to private events. What started as a small operation out of a home kitchen has grown into one of the city's most beloved catering companies, known for our creative menus, attention to detail, and unwavering commitment to our clients. We believe that food is more than just sustenance; it's a way to connect, celebrate, and create lasting memories. That philosophy is at the heart of everything we do.
             </p>
           </div>
           <div className="order-1 md:order-2">
@@ -183,13 +189,13 @@ export default function AboutPage() {
             Meet the Team
           </h2>
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {teamMembers.map((member) => (
+            {teamMembers.filter(m => m.is_active).sort((a,b) => a.display_order - b.display_order).map((member) => (
               <Card key={member.id} className="text-center">
                 <CardContent className="p-6">
                   <div className="w-32 h-32 rounded-full mx-auto overflow-hidden">
                     <Image
                       src={
-                        member.imageUrl ||
+                        member.photo_url ||
                         `https://picsum.photos/seed/${member.imageSeed}/200/200`
                       }
                       alt={member.name}
@@ -361,54 +367,28 @@ export default function AboutPage() {
                     </a>
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <Facebook className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Facebook</h4>
-                    <a
-                      href={socialLinks.facebook}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-primary"
-                    >
-                      Follow on Facebook
-                    </a>
-                  </div>
-                </div>
-                 <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <Instagram className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Instagram</h4>
-                    <a
-                      href={socialLinks.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-primary"
-                    >
-                      Follow on Instagram
-                    </a>
-                  </div>
-                </div>
-                 <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <Twitter className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Twitter</h4>
-                    <a
-                      href={socialLinks.twitter}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-primary"
-                    >
-                      Follow on Twitter
-                    </a>
-                  </div>
-                </div>
+                {socialLinks.filter(l => l.is_active).map(link => {
+                  const Icon = socialIcons[link.platform];
+                  if (!Icon) return null;
+                  return (
+                    <div className="flex items-start gap-4" key={link.platform}>
+                      <div className="bg-primary/10 p-3 rounded-full">
+                        <Icon className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold capitalize">{link.platform}</h4>
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary"
+                        >
+                          Follow on {link.platform}
+                        </a>
+                      </div>
+                    </div>
+                  )
+                })}
               </CardContent>
             </Card>
           </div>

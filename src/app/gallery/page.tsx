@@ -19,20 +19,19 @@ export default function GalleryPage() {
       </div>
 
       <div className="mt-16 columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-        {galleryImages.map((image, index) => (
+        {galleryImages.sort((a,b) => a.display_order - b.display_order).map((image, index) => (
           <div key={image.id} className="break-inside-avoid">
             <Card className="overflow-hidden group">
               <div className="relative aspect-auto">
                 <Image
-                  src={image.src}
-                  alt={image.alt}
-                  data-ai-hint={image.aiHint}
+                  src={image.image_url}
+                  alt={image.caption}
                   width={600}
                   height={400 + (index % 3) * 100}
                   className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors flex items-end">
-                    <p className="text-white text-sm p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">{image.alt}</p>
+                    <p className="text-white text-sm p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">{image.caption}</p>
                 </div>
               </div>
             </Card>
