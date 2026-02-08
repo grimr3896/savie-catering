@@ -275,7 +275,11 @@ export default function Home() {
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            className="w-5 h-5 text-yellow-500 fill-yellow-500"
+                            className={`w-5 h-5 transition-colors ${
+                              i < testimonial.rating
+                                ? 'text-yellow-500 fill-yellow-500'
+                                : 'text-muted-foreground/50'
+                            }`}
                           />
                         ))}
                       </div>

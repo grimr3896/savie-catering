@@ -36,6 +36,7 @@ import {
   Trash2,
   PlusCircle,
   UtensilsCrossed,
+  Star,
 } from 'lucide-react';
 import Image from 'next/image';
 import {
@@ -348,26 +349,30 @@ const TestimonialEditDialog = ({
     name: string;
     event: string;
     quote: string;
+    rating: number;
   }) => void;
 }) => {
   const [name, setName] = React.useState('');
   const [event, setEvent] = React.useState('');
   const [quote, setQuote] = React.useState('');
+  const [rating, setRating] = React.useState(5);
 
   React.useEffect(() => {
     if (testimonial) {
       setName(testimonial.name);
       setEvent(testimonial.event);
       setQuote(testimonial.quote);
+      setRating(testimonial.rating);
     } else {
       setName('');
       setEvent('');
       setQuote('');
+      setRating(5);
     }
   }, [testimonial, open]);
 
   const handleSaveClick = () => {
-    onSave({ name, event, quote });
+    onSave({ name, event, quote, rating });
   };
 
   return (
@@ -405,6 +410,27 @@ const TestimonialEditDialog = ({
               onChange={(e) => setQuote(e.target.value)}
               placeholder="Client quote..."
             />
+          </div>
+          <div className="space-y-3 pt-2">
+            <Label>Rating</Label>
+            <div className="flex items-center gap-2">
+              {[...Array(5)].map((_, i) => (
+                <button
+                  type="button"
+                  key={i}
+                  onClick={() => setRating(i + 1)}
+                  className="focus:outline-none"
+                >
+                  <Star
+                    className={`h-6 w-6 transition-colors ${
+                      i < rating
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : 'fill-muted text-muted-foreground'
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
           </div>
         </div>
         <DialogFooter>
@@ -634,12 +660,13 @@ export default function ControllerPage() {
     name: string;
     event: string;
     quote: string;
+    rating: number;
   }) => {
     if (editingTestimonial) {
       setTestimonials(
         testimonials.map((t) =>
           t.id === editingTestimonial.id
-            ? { ...editingTestimonial, ...testimonialData }
+            ? { ...t, ...testimonialData }
             : t
         )
       );
@@ -650,7 +677,6 @@ export default function ControllerPage() {
     } else {
       const newTestimonial: Testimonial = {
         id: Date.now(),
-        rating: 5,
         ...testimonialData,
       };
       setTestimonials([newTestimonial, ...testimonials]);
