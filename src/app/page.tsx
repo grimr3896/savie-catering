@@ -57,10 +57,10 @@ export default function Home() {
         )}
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white p-4">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-headline font-bold drop-shadow-lg">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-headline font-bold text-white drop-shadow-lg">
             Exquisite Catering for Unforgettable Moments
           </h1>
-          <p className="mt-4 max-w-2xl text-lg md:text-xl">
+          <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90">
             From intimate gatherings to grand celebrations, we bring culinary
             excellence and impeccable service to your table.
           </p>
@@ -72,7 +72,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="services" className="py-16 md:py-24 bg-background">
+      <section id="services" className="py-16 md:py-24 bg-background/90 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-headline font-semibold">
@@ -116,7 +116,7 @@ export default function Home() {
                       </div>
                     )}
                     <CardHeader className="items-center text-center">
-                      <div className="bg-primary/10 p-4 rounded-full -mt-12 bg-background z-10 border">
+                      <div className="bg-primary/10 p-4 rounded-full -mt-12 bg-card z-10 border">
                         <service.icon className="w-10 h-10 text-primary" />
                       </div>
                       <CardTitle className="font-headline mt-4 text-2xl">
@@ -179,7 +179,7 @@ export default function Home() {
                       </div>
                     )}
                     <CardHeader className="items-center text-center">
-                      <div className="bg-primary/10 p-4 rounded-full -mt-12 bg-background z-10 border">
+                      <div className="bg-primary/10 p-4 rounded-full -mt-12 bg-card z-10 border">
                         <service.icon className="w-10 h-10 text-primary" />
                       </div>
                       <CardTitle className="font-headline mt-4 text-2xl">
@@ -245,7 +245,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="testimonials" className="py-16 md:py-24 bg-background">
+      <section id="testimonials" className="py-16 md:py-24 bg-background/90 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-headline font-semibold">
@@ -277,7 +277,7 @@ export default function Home() {
                             key={i}
                             className={`w-5 h-5 transition-colors ${
                               i < testimonial.rating
-                                ? 'text-yellow-500 fill-yellow-500'
+                                ? 'text-yellow-400 fill-yellow-400'
                                 : 'text-muted-foreground/50'
                             }`}
                           />
