@@ -15,6 +15,10 @@ const aboutUsImagePlaceholder = PlaceHolderImages.find(
 const HERO_IMAGE_STORAGE_KEY = 'savie-royal-heroImageUrl';
 const ABOUT_US_IMAGE_STORAGE_KEY = 'savie-royal-aboutUsImageUrl';
 const SOCIAL_LINKS_STORAGE_KEY = 'savie-royal-socialLinks';
+const SERVICES_STORAGE_KEY = 'savie-royal-services';
+const GALLERY_IMAGES_STORAGE_KEY = 'savie-royal-galleryImages';
+const TESTIMONIALS_STORAGE_KEY = 'savie-royal-testimonials';
+const TEAM_MEMBERS_STORAGE_KEY = 'savie-royal-teamMembers';
 
 
 type SiteContentContextType = {
@@ -23,13 +27,13 @@ type SiteContentContextType = {
   aboutUsImageUrl: string;
   setAboutUsImageUrl: (url: string) => void;
   services: Service[];
-  setServices: React.Dispatch<React.SetStateAction<Service[]>>;
+  setServices: (services: Service[]) => void;
   galleryImages: GalleryImage[];
-  setGalleryImages: React.Dispatch<React.SetStateAction<GalleryImage[]>>;
+  setGalleryImages: (images: GalleryImage[]) => void;
   testimonials: Testimonial[];
-  setTestimonials: React.Dispatch<React.SetStateAction<Testimonial[]>>;
+  setTestimonials: (testimonials: Testimonial[]) => void;
   teamMembers: TeamMember[];
-  setTeamMembers: React.Dispatch<React.SetStateAction<TeamMember[]>>;
+  setTeamMembers: (members: TeamMember[]) => void;
   socialLinks: SocialLinks;
   setSocialLinks: (links: SocialLinks) => void;
 };
@@ -61,9 +65,24 @@ export const SiteContentProvider = ({ children }: { children: ReactNode }) => {
     if (storedAboutUsImage) {
       setAboutUsImageUrl(storedAboutUsImage);
     }
-    const storedSocialLinks = localStorage.getItem(SOCIAL_LINKS_STORAGE_KEY);
-    if (storedSocialLinks) {
-      setSocialLinks(JSON.parse(storedSocialLinks));
+    
+    try {
+      const storedSocialLinks = localStorage.getItem(SOCIAL_LINKS_STORAGE_KEY);
+      if (storedSocialLinks) setSocialLinks(JSON.parse(storedSocialLinks));
+
+      const storedServices = localStorage.getItem(SERVICES_STORAGE_KEY);
+      if (storedServices) setServices(JSON.parse(storedServices));
+
+      const storedGalleryImages = localStorage.getItem(GALLERY_IMAGES_STORAGE_KEY);
+      if (storedGalleryImages) setGalleryImages(JSON.parse(storedGalleryImages));
+
+      const storedTestimonials = localStorage.getItem(TESTIMONIALS_STORAGE_KEY);
+      if (storedTestimonials) setTestimonials(JSON.parse(storedTestimonials));
+
+      const storedTeamMembers = localStorage.getItem(TEAM_MEMBERS_STORAGE_KEY);
+      if (storedTeamMembers) setTeamMembers(JSON.parse(storedTeamMembers));
+    } catch (error) {
+      console.error("Failed to parse content from localStorage", error);
     }
   }, []);
 
@@ -82,6 +101,26 @@ export const SiteContentProvider = ({ children }: { children: ReactNode }) => {
     setSocialLinks(links);
   };
 
+  const handleSetServices = (updatedServices: Service[]) => {
+    localStorage.setItem(SERVICES_STORAGE_KEY, JSON.stringify(updatedServices));
+    setServices(updatedServices);
+  };
+
+  const handleSetGalleryImages = (updatedImages: GalleryImage[]) => {
+    localStorage.setItem(GALLERY_IMAGES_STORAGE_KEY, JSON.stringify(updatedImages));
+    setGalleryImages(updatedImages);
+  };
+
+  const handleSetTestimonials = (updatedTestimonials: Testimonial[]) => {
+    localStorage.setItem(TESTIMONIALS_STORAGE_KEY, JSON.stringify(updatedTestimonials));
+    setTestimonials(updatedTestimonials);
+  };
+
+  const handleSetTeamMembers = (updatedMembers: TeamMember[]) => {
+    localStorage.setItem(TEAM_MEMBERS_STORAGE_KEY, JSON.stringify(updatedMembers));
+    setTeamMembers(updatedMembers);
+  };
+
 
   return (
     <SiteContentContext.Provider
@@ -91,13 +130,13 @@ export const SiteContentProvider = ({ children }: { children: ReactNode }) => {
         aboutUsImageUrl,
         setAboutUsImageUrl: handleSetAboutUsImageUrl,
         services,
-        setServices,
+        setServices: handleSetServices,
         galleryImages,
-        setGalleryImages,
+        setGalleryImages: handleSetGalleryImages,
         testimonials,
-        setTestimonials,
+        setTestimonials: handleSetTestimonials,
         teamMembers,
-        setTeamMembers,
+        setTeamMembers: handleSetTeamMembers,
         socialLinks,
         setSocialLinks: handleSetSocialLinks,
       }}
