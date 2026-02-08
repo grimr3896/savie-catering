@@ -168,17 +168,6 @@ export default function ContactPage() {
               <CardContent className="pt-6 space-y-4">
                 <div className="flex items-start gap-4">
                   <div className="bg-primary/10 p-3 rounded-full">
-                    <MapPin className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">Address</h3>
-                    <p className="text-muted-foreground">
-                      123 Catering Lane, Foodie City, 12345
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
                     <Mail className="h-6 w-6 text-primary" />
                   </div>
                   <div>

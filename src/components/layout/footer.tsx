@@ -104,7 +104,6 @@ export function Footer() {
           <div>
             <h3 className="font-semibold font-headline">Contact Us</h3>
             <address className="mt-4 space-y-2 text-sm not-italic text-muted-foreground">
-              <p>123 Catering Lane, Foodie City, 12345</p>
               <a
                 href="mailto:savieroyal1@gmail.com"
                 className="block hover:text-foreground transition-colors"
