@@ -1,8 +1,27 @@
 'use client';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+
+type Particle = {
+  id: number;
+  style: React.CSSProperties;
+};
 
 const SimpleCateringBackground = () => {
-  const particles = Array.from({ length: 15 });
+  const [particles, setParticles] = useState<Particle[]>([]);
+
+  useEffect(() => {
+    const generateParticles = () => {
+      return Array.from({ length: 15 }).map((_, i) => ({
+        id: i,
+        style: {
+          left: `${Math.random() * 100}%`,
+          animationDelay: `${Math.random() * -20}s`,
+          animationDuration: `${10 + Math.random() * 20}s`,
+        },
+      }));
+    };
+    setParticles(generateParticles());
+  }, []); // Empty dependency array ensures this runs only once on the client after mount
 
   return (
     <div className="fixed inset-0 -z-10 h-full w-full overflow-hidden bg-background">
@@ -25,15 +44,11 @@ const SimpleCateringBackground = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-72 w-72 rounded-full bg-primary/10 blur-3xl animate-float-slow" style={{ animationDelay: '-20s' }} />
 
       {/* Particle Effects */}
-      {particles.map((_, i) => (
+      {particles.map((particle) => (
         <div
-          key={`particle-${i}`}
+          key={`particle-${particle.id}`}
           className="absolute h-1 w-1 rounded-full bg-primary/50 animate-float-particle"
-          style={{
-            left: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * -20}s`,
-            animationDuration: `${10 + Math.random() * 20}s`,
-          }}
+          style={particle.style}
         />
       ))}
     </div>
