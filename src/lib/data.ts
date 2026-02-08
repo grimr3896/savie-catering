@@ -9,7 +9,7 @@ import {
   Table,
   Soup,
 } from 'lucide-react';
-import type { Service } from './definitions';
+import type { Service, GalleryImage, Testimonial } from './definitions';
 import { PlaceHolderImages } from './placeholder-images';
 
 export const services: Service[] = [

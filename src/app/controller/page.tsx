@@ -38,11 +38,14 @@ import {
   UtensilsCrossed,
 } from 'lucide-react';
 import Image from 'next/image';
-import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-images';
+import {
+  PlaceHolderImages,
+  type ImagePlaceholder,
+} from '@/lib/placeholder-images';
 import {
   services as initialServices,
   guestServices,
-  galleryImages,
+  galleryImages as initialGalleryImages,
   testimonials as initialTestimonials,
 } from '@/lib/data';
 import type { Service, Testimonial, GalleryImage } from '@/lib/definitions';
@@ -289,7 +292,19 @@ export default function ControllerPage() {
   const [serviceToDelete, setServiceToDelete] = React.useState<Service | null>(
     null
   );
-    
+
+  // --- State for Gallery ---
+  const [currentGalleryImages, setCurrentGalleryImages] =
+    React.useState<GalleryImage[]>(initialGalleryImages);
+  const [galleryImageToDelete, setGalleryImageToDelete] =
+    React.useState<GalleryImage | null>(null);
+
+  // --- State for Testimonials ---
+  const [testimonials, setTestimonials] =
+    React.useState<Testimonial[]>(initialTestimonials);
+  const [testimonialToDelete, setTestimonialToDelete] =
+    React.useState<Testimonial | null>(null);
+
   const getImageUrl = (
     imageId: string | undefined
   ): ImagePlaceholder | undefined => {
@@ -336,6 +351,32 @@ export default function ControllerPage() {
         description: `${serviceToDelete.title} has been removed.`,
       });
       setServiceToDelete(null);
+    }
+  };
+
+  const confirmDeleteGalleryImage = () => {
+    if (galleryImageToDelete) {
+      setCurrentGalleryImages(
+        currentGalleryImages.filter((img) => img.id !== galleryImageToDelete.id)
+      );
+      toast({
+        title: 'Gallery Image Deleted',
+        description: `The image has been removed.`,
+      });
+      setGalleryImageToDelete(null);
+    }
+  };
+
+  const confirmDeleteTestimonial = () => {
+    if (testimonialToDelete) {
+      setTestimonials(
+        testimonials.filter((t) => t.id !== testimonialToDelete.id)
+      );
+      toast({
+        title: 'Testimonial Deleted',
+        description: `The testimonial by ${testimonialToDelete.name} has been removed.`,
+      });
+      setTestimonialToDelete(null);
     }
   };
 
@@ -420,7 +461,7 @@ export default function ControllerPage() {
               <div className="space-y-2 pt-4">
                 <h4 className="font-semibold">Current Gallery Images</h4>
                 <div className="max-h-96 overflow-y-auto space-y-2 pr-2">
-                  {galleryImages.map((image) => (
+                  {currentGalleryImages.map((image) => (
                     <div
                       key={image.id}
                       className="border rounded-lg p-2 flex items-center justify-between"
@@ -444,6 +485,7 @@ export default function ControllerPage() {
                           variant="ghost"
                           size="icon"
                           className="text-destructive"
+                          onClick={() => setGalleryImageToDelete(image)}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -470,16 +512,19 @@ export default function ControllerPage() {
                 {services.map((service) => {
                   const image = getImageUrl(service.imageId);
                   return (
-                    <Card key={service.id} className="flex flex-col overflow-hidden">
+                    <Card
+                      key={service.id}
+                      className="flex flex-col overflow-hidden"
+                    >
                       {image && (
                         <div className="relative h-40 w-full">
-                            <Image
-                                src={image.imageUrl}
-                                alt={image.description}
-                                data-ai-hint={image.imageHint}
-                                fill
-                                className="object-cover"
-                            />
+                          <Image
+                            src={image.imageUrl}
+                            alt={image.description}
+                            data-ai-hint={image.imageHint}
+                            fill
+                            className="object-cover"
+                          />
                         </div>
                       )}
                       <CardHeader>
@@ -559,7 +604,7 @@ export default function ControllerPage() {
             <div className="space-y-2 pt-4">
               <h4 className="font-semibold">Current Testimonials</h4>
               <div className="max-h-64 overflow-y-auto space-y-2 pr-2">
-                {initialTestimonials.map((testimonial) => (
+                {testimonials.map((testimonial) => (
                   <div
                     key={testimonial.id}
                     className="border rounded-lg p-3 flex items-center justify-between"
@@ -578,6 +623,7 @@ export default function ControllerPage() {
                         variant="ghost"
                         size="icon"
                         className="text-destructive"
+                        onClick={() => setTestimonialToDelete(testimonial)}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -636,6 +682,54 @@ export default function ControllerPage() {
             <AlertDialogAction
               className="bg-destructive hover:bg-destructive/90"
               onClick={confirmDeleteService}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={!!galleryImageToDelete}
+        onOpenChange={() => setGalleryImageToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              gallery image with caption "{galleryImageToDelete?.alt}".
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive hover:bg-destructive/90"
+              onClick={confirmDeleteGalleryImage}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={!!testimonialToDelete}
+        onOpenChange={() => setTestimonialToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              testimonial by "{testimonialToDelete?.name}".
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive hover:bg-destructive/90"
+              onClick={confirmDeleteTestimonial}
             >
               Delete
             </AlertDialogAction>
