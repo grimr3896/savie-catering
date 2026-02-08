@@ -100,17 +100,14 @@ export default function AboutPage() {
           <div className="order-2 md:order-1">
             <h2 className="text-3xl font-headline font-semibold">Our Story</h2>
             <p className="mt-4 text-muted-foreground">
-              Founded in 2010 by Chef Jane Doe, SAVIE ROYAL was born from a simple
-              idea: to bring restaurant-quality culinary experiences to private
-              events. What started as a small operation out of a home kitchen has
-              grown into one of the city's most beloved catering companies, known
-              for our creative menus, attention to detail, and unwavering
-              commitment to our clients.
-            </p>
-            <p className="mt-4 text-muted-foreground">
-              We believe that food is more than just sustenance; it's a way to
-              connect, celebrate, and create lasting memories. That philosophy is at
-              the heart of everything we do.
+              SAVIE ROYAL was born from a simple idea: to bring
+              restaurant-quality culinary experiences to private events. What
+              started as a small operation out of a home kitchen has grown into
+              one of the city's most beloved catering companies, known for our
+              creative menus, attention to detail, and unwavering commitment to
+              our clients. We believe that food is more than just sustenance;
+              it's a way to connect, celebrate, and create lasting memories.
+              That philosophy is at the heart of everything we do.
             </p>
           </div>
           <div className="order-1 md:order-2">
