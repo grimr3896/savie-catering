@@ -24,7 +24,7 @@ import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-imag
 import { useSiteContent } from '@/context/SiteContentContext';
 
 export default function Home() {
-  const { services, galleryImages, testimonials } =
+  const { services, galleryImages, testimonials, heroImageUrl } =
     useSiteContent();
 
   const galleryPreviewImages = galleryImages.slice(0, 4);
@@ -36,20 +36,36 @@ export default function Home() {
     return PlaceHolderImages.find((p) => p.id === imageId);
   };
   
+  const heroImagePlaceholder = PlaceHolderImages.find(
+    (p) => p.id === 'hero-image'
+  );
+
   const cateringPackages = services.filter((s) => s.category === 'package');
   const guestServices = services.filter((s) => s.category === 'guest');
 
   return (
     <div className="flex flex-col">
-      <section className="flex h-[60vh] md:h-[80vh] w-full flex-col items-center justify-center bg-secondary p-4 text-center">
+      <section className="relative h-[60vh] md:h-[80vh] w-full flex flex-col items-center justify-center text-center text-primary-foreground p-4 overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src={heroImageUrl}
+            alt={heroImagePlaceholder?.description || 'Catering event'}
+            fill
+            className="object-cover"
+            data-ai-hint={heroImagePlaceholder?.imageHint}
+            priority
+          />
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
+        <div className="relative z-10">
           <h1
-            className="text-4xl md:text-6xl lg:text-7xl font-headline font-bold animate-fade-in-up"
+            className="text-4xl md:text-6xl lg:text-7xl font-headline font-bold animate-fade-in-up drop-shadow-lg"
             style={{ animationDelay: '0.2s', opacity: 0 }}
           >
             Exceptional Catering. Crafted Live.
           </h1>
           <p
-            className="mt-4 max-w-2xl text-lg md:text-xl text-muted-foreground animate-fade-in-up"
+            className="mt-4 max-w-2xl text-lg md:text-xl animate-fade-in-up"
             style={{ animationDelay: '0.4s', opacity: 0 }}
           >
             Weddings • Corporate • Private Dining
@@ -64,6 +80,7 @@ export default function Home() {
               </Link>
             </Button>
           </div>
+        </div>
       </section>
 
       <section id="services" className="py-16 md:py-24 bg-background">
