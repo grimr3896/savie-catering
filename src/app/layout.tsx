@@ -3,7 +3,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { AppProviders } from '@/components/providers';
-import SimpleCateringBackground from '@/components/SimpleCateringBackground';
+import PremiumCateringBackground from '@/components/PremiumCateringBackground';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -33,8 +33,8 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <AppProviders>
-          <SimpleCateringBackground />
-          <div className="relative z-10 flex min-h-screen flex-col">
+          <PremiumCateringBackground />
+          <div className="relative z-10 flex min-h-screen flex-col bg-background/60 backdrop-blur-sm">
             <Header />
             <main className="flex-grow">{children}</main>
             <Footer />
