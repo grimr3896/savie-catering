@@ -10,8 +10,8 @@ const aboutUsImagePlaceholder = PlaceHolderImages.find(
   (p) => p.id === 'about-us-image'
 );
 
-const HERO_IMAGE_STORAGE_KEY = 'cater-ease-heroImageUrl';
-const ABOUT_US_IMAGE_STORAGE_KEY = 'cater-ease-aboutUsImageUrl';
+const HERO_IMAGE_STORAGE_KEY = 'savie-royal-heroImageUrl';
+const ABOUT_US_IMAGE_STORAGE_KEY = 'savie-royal-aboutUsImageUrl';
 
 
 type SiteContentContextType = {

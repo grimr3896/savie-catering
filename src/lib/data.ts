@@ -114,7 +114,7 @@ export const testimonials: Testimonial[] = [
     name: 'Sarah & Tom',
     event: 'Wedding Celebration',
     quote:
-      'CaterEase made our wedding day absolutely perfect. The food was divine, and the service was flawless. Our guests are still raving about the duck confit!',
+      'SAVIE ROYAL made our wedding day absolutely perfect. The food was divine, and the service was flawless. Our guests are still raving about the duck confit!',
     rating: 5,
   },
   {
@@ -122,7 +122,7 @@ export const testimonials: Testimonial[] = [
     name: 'John D., CEO of TechCorp',
     event: 'Annual Corporate Gala',
     quote:
-      'The professionalism and quality from CaterEase are unmatched. They handled our 500-guest gala with ease, and the food was a huge hit. Highly recommended.',
+      'The professionalism and quality from SAVIE ROYAL are unmatched. They handled our 500-guest gala with ease, and the food was a huge hit. Highly recommended.',
     rating: 5,
   },
   {
@@ -130,7 +130,7 @@ export const testimonials: Testimonial[] = [
     name: 'Maria G.',
     event: '50th Birthday Party',
     quote:
-      "I couldn't have asked for a better catering experience for my birthday. The team was so attentive, and the dessert table was a work of art. Thank you, CaterEase!",
+      "I couldn't have asked for a better catering experience for my birthday. The team was so attentive, and the dessert table was a work of art. Thank you, SAVIE ROYAL!",
     rating: 5,
   },
 ];

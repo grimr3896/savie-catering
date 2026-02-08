@@ -107,10 +107,10 @@ export function Footer() {
             <address className="mt-4 space-y-2 text-sm not-italic text-muted-foreground">
               <p>123 Catering Lane, Foodie City, 12345</p>
               <a
-                href="mailto:contact@caterease.com"
+                href="mailto:contact@savieroyal.com"
                 className="block hover:text-foreground transition-colors"
               >
-                contact@caterease.com
+                contact@savieroyal.com
               </a>
               <a
                 href="tel:+1234567890"
@@ -123,7 +123,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} CaterEase. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} SAVIE ROYAL. All rights reserved.</p>
         </div>
       </div>
     </footer>

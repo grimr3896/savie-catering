@@ -6,9 +6,9 @@ import { AppProviders } from '@/components/providers';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'CaterEase - Effortless Event Catering',
+  title: 'SAVIE ROYAL - Effortless Event Catering',
   description:
-    'CaterEase offers premium catering services for weddings, corporate events, and private parties. Discover our exquisite menus and book your event today.',
+    'SAVIE ROYAL offers premium catering services for weddings, corporate events, and private parties. Discover our exquisite menus and book your event today.',
 };
 
 export default function RootLayout({

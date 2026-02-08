@@ -160,7 +160,7 @@ export default function ContactPage() {
                         </div>
                         <div>
                             <h3 className="font-semibold">Email</h3>
-                            <a href="mailto:contact@caterease.com" className="text-muted-foreground hover:text-primary">contact@caterease.com</a>
+                            <a href="mailto:contact@savieroyal.com" className="text-muted-foreground hover:text-primary">contact@savieroyal.com</a>
                         </div>
                     </div>
                     <div className="flex items-start gap-4">

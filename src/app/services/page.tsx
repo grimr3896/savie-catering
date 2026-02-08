@@ -29,7 +29,7 @@ export default function ServicesPage() {
           Our Catering Services
         </h1>
         <p className="mt-4 text-lg text-muted-foreground">
-          Whatever the occasion, CaterEase provides exceptional food and
+          Whatever the occasion, SAVIE ROYAL provides exceptional food and
           impeccable service. Explore our offerings to find the perfect fit for
           your event.
         </p>

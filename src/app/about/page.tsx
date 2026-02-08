@@ -89,7 +89,7 @@ export default function AboutPage() {
       <div className="container mx-auto px-4 py-16 md:py-24">
         <div className="text-center">
           <h1 className="text-4xl md:text-5xl font-headline font-bold">
-            About CaterEase
+            About SAVIE ROYAL
           </h1>
           <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
             Passion for Food, Dedication to Service.
@@ -100,7 +100,7 @@ export default function AboutPage() {
           <div className="order-2 md:order-1">
             <h2 className="text-3xl font-headline font-semibold">Our Story</h2>
             <p className="mt-4 text-muted-foreground">
-              Founded in 2010 by Chef Jane Doe, CaterEase was born from a simple
+              Founded in 2010 by Chef Jane Doe, SAVIE ROYAL was born from a simple
               idea: to bring restaurant-quality culinary experiences to private
               events. What started as a small operation out of a home kitchen has
               grown into one of the city's most beloved catering companies, known
@@ -339,10 +339,10 @@ export default function AboutPage() {
                   <div>
                     <h4 className="font-semibold">Email</h4>
                     <a
-                      href="mailto:contact@caterease.com"
+                      href="mailto:contact@savieroyal.com"
                       className="text-muted-foreground hover:text-primary"
                     >
-                      contact@caterease.com
+                      contact@savieroyal.com
                     </a>
                   </div>
                 </div>
