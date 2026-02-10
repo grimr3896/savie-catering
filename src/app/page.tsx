@@ -85,14 +85,16 @@ export default function Home() {
     <div className="flex flex-col">
       <section className="relative h-[60vh] md:h-[80vh] w-full flex flex-col items-center justify-center text-center text-primary-foreground p-4 overflow-hidden">
         <div className="absolute inset-0">
-          <Image
-            src={heroImageUrl}
-            alt={heroImagePlaceholder?.description || 'Catering event'}
-            fill
-            className="object-cover"
-            data-ai-hint={heroImagePlaceholder?.imageHint}
-            priority
-          />
+          {heroImageUrl && (
+            <Image
+              src={heroImageUrl}
+              alt={heroImagePlaceholder?.description || 'Catering event'}
+              fill
+              className="object-cover"
+              data-ai-hint={heroImagePlaceholder?.imageHint}
+              priority
+            />
+          )}
           <div className="absolute inset-0 bg-black/50" />
         </div>
         <div className="relative z-10">

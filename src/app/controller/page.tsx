@@ -1050,6 +1050,9 @@ export default function ControllerPage() {
     }
   };
 
+  const heroImageSrc = heroImagePreview || heroImageUrl;
+  const aboutImageSrc = aboutImagePreview || aboutUsImageUrl;
+
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
       <div className="text-center max-w-3xl mx-auto">
@@ -1074,29 +1077,33 @@ export default function ControllerPage() {
             <div>
               <Label htmlFor="hero-image">Homepage Hero Image</Label>
               <div className="my-2 rounded-lg overflow-hidden relative aspect-video">
-                <Image
-                  src={heroImagePreview || heroImageUrl}
-                  alt={heroImagePlaceholder?.description || 'Hero image preview'}
-                  fill
-                  className="object-cover"
-                  data-ai-hint={heroImagePlaceholder?.imageHint}
-                />
+                {heroImageSrc && (
+                  <Image
+                    src={heroImageSrc}
+                    alt={heroImagePlaceholder?.description || 'Hero image preview'}
+                    fill
+                    className="object-cover"
+                    data-ai-hint={heroImagePlaceholder?.imageHint}
+                  />
+                )}
               </div>
               <ImageUploader onFileChange={setHeroImageFile} />
             </div>
             <div>
               <Label htmlFor="about-us-image">About Us Page Image</Label>
               <div className="my-2 rounded-lg overflow-hidden relative aspect-video">
-                <Image
-                  src={aboutImagePreview || aboutUsImageUrl}
-                  alt={
-                    aboutUsImagePlaceholder?.description ||
-                    'About us image preview'
-                  }
-                  fill
-                  className="object-cover"
-                  data-ai-hint={aboutUsImagePlaceholder?.imageHint}
-                />
+                {aboutImageSrc && (
+                  <Image
+                    src={aboutImageSrc}
+                    alt={
+                      aboutUsImagePlaceholder?.description ||
+                      'About us image preview'
+                    }
+                    fill
+                    className="object-cover"
+                    data-ai-hint={aboutUsImagePlaceholder?.imageHint}
+                  />
+                )}
               </div>
               <ImageUploader onFileChange={setAboutImageFile} />
             </div>
