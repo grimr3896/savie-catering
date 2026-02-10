@@ -11,7 +11,6 @@ import {
   ChefHat,
   Heart,
   Star,
-  Loader2,
   Mail,
   Phone,
   Facebook,
@@ -30,7 +29,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { submitContactForm } from './actions';
 import { useSiteContent } from '@/context/SiteContentContext';
 import type { SocialLink } from '@/lib/definitions';
 
@@ -51,7 +49,6 @@ const socialIcons: Record<string, React.ElementType> = {
 
 export default function AboutPage() {
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const { aboutUsImageUrl, teamMembers, socialLinks } = useSiteContent();
   const aboutUsImagePlaceholder = PlaceHolderImages.find(
@@ -68,24 +65,22 @@ export default function AboutPage() {
     },
   });
 
-  async function onSubmit(data: ContactFormValues) {
-    setIsSubmitting(true);
-    const result = await submitContactForm(data);
-    setIsSubmitting(false);
+  function onSubmit(data: ContactFormValues) {
+    const { name, email, subject, message } = data;
+    const recipientEmail = 'savieroyal1@gmail.com';
+    const emailSubject = encodeURIComponent(subject);
+    const emailBody = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
+    );
 
-    if (result.success) {
-      toast({
-        title: 'Message Sent!',
-        description: result.message,
-      });
-      form.reset();
-    } else {
-      toast({
-        variant: 'destructive',
-        title: 'Uh oh! Something went wrong.',
-        description: result.error,
-      });
-    }
+    window.location.href = `mailto:${recipientEmail}?subject=${emailSubject}&body=${emailBody}`;
+
+    toast({
+      title: 'Opening your email client...',
+      description: 'Please complete and send the email from your mail application.',
+    });
+    
+    form.reset();
   }
 
   return (
@@ -302,11 +297,7 @@ export default function AboutPage() {
                   type="submit"
                   size="lg"
                   className="w-full md:w-auto"
-                  disabled={isSubmitting}
                 >
-                  {isSubmitting && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
                   Submit Message
                 </Button>
               </form>
