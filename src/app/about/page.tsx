@@ -108,12 +108,12 @@ export default function AboutPage() {
             </p>
           </div>
           <div className="order-1 md:order-2">
-            {aboutUsImageUrl && aboutUsImagePlaceholder && (
+            {aboutUsImageUrl && (
               <div className="rounded-lg overflow-hidden shadow-lg">
                 <Image
                   src={aboutUsImageUrl}
-                  alt={aboutUsImagePlaceholder.description}
-                  data-ai-hint={aboutUsImagePlaceholder.imageHint}
+                  alt={aboutUsImagePlaceholder?.description || "Our Story Image"}
+                  data-ai-hint={aboutUsImagePlaceholder?.imageHint || "catering team"}
                   width={800}
                   height={600}
                   className="object-cover"
