@@ -205,7 +205,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="gallery" className="py-16 md:py-24 bg-muted/50">
+      <section id="gallery" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-headline font-semibold">
@@ -218,8 +218,8 @@ export default function Home() {
           </div>
           <div className="mt-12 columns-2 md:columns-4 gap-4 space-y-4">
             {galleryPreviewImages.map((image, index) => (
-                <div key={image.id} className="break-inside-avoid group">
-                    <div className="relative overflow-hidden rounded-lg">
+                <div key={image.id} className="break-inside-avoid">
+                    <Card className="overflow-hidden relative group">
                         <Image
                             src={image.image_url}
                             alt={image.caption}
@@ -230,7 +230,7 @@ export default function Home() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                             <p className="text-white text-base font-semibold transform-gpu translate-y-4 group-hover:translate-y-0 transition-transform duration-300">{image.caption}</p>
                         </div>
-                    </div>
+                    </Card>
                 </div>
             ))}
         </div>
