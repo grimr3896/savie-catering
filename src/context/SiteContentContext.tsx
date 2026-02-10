@@ -68,19 +68,34 @@ export const SiteContentProvider = ({ children }: { children: ReactNode }) => {
     
     try {
       const storedSocialLinks = localStorage.getItem(SOCIAL_LINKS_STORAGE_KEY);
-      if (storedSocialLinks) setSocialLinks(JSON.parse(storedSocialLinks));
+      if (storedSocialLinks) {
+        const parsed = JSON.parse(storedSocialLinks);
+        if (Array.isArray(parsed) && parsed.length > 0) setSocialLinks(parsed);
+      }
 
       const storedServices = localStorage.getItem(SERVICES_STORAGE_KEY);
-      if (storedServices) setServices(JSON.parse(storedServices));
+      if (storedServices) {
+        const parsed = JSON.parse(storedServices);
+        if (Array.isArray(parsed) && parsed.length > 0) setServices(parsed);
+      }
 
       const storedGalleryImages = localStorage.getItem(GALLERY_IMAGES_STORAGE_KEY);
-      if (storedGalleryImages) setGalleryImages(JSON.parse(storedGalleryImages));
+      if (storedGalleryImages) {
+        const parsed = JSON.parse(storedGalleryImages);
+        if (Array.isArray(parsed) && parsed.length > 0) setGalleryImages(parsed);
+      }
 
       const storedTestimonials = localStorage.getItem(TESTIMONIALS_STORAGE_KEY);
-      if (storedTestimonials) setTestimonials(JSON.parse(storedTestimonials));
+      if (storedTestimonials) {
+        const parsed = JSON.parse(storedTestimonials);
+        if (Array.isArray(parsed) && parsed.length > 0) setTestimonials(parsed);
+      }
 
       const storedTeamMembers = localStorage.getItem(TEAM_MEMBERS_STORAGE_KEY);
-      if (storedTeamMembers) setTeamMembers(JSON.parse(storedTeamMembers));
+      if (storedTeamMembers) {
+        const parsed = JSON.parse(storedTeamMembers);
+        if (Array.isArray(parsed) && parsed.length > 0) setTeamMembers(parsed);
+      }
     } catch (error) {
       console.error("Failed to parse content from localStorage", error);
     }
