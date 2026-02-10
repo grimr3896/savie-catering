@@ -262,6 +262,17 @@ export default function Home() {
                 <CarouselItem key={testimonial.id}>
                   <Card className="border-none shadow-none bg-transparent">
                     <CardContent className="flex flex-col items-center text-center p-6">
+                       {testimonial.client_image_url && (
+                        <div className="relative w-24 h-24 rounded-full overflow-hidden mb-4">
+                            <Image
+                                src={testimonial.client_image_url}
+                                alt={testimonial.client_name}
+                                fill
+                                className="object-cover"
+                                data-ai-hint="portrait person"
+                            />
+                        </div>
+                      )}
                       <Quote className="w-8 h-8 text-primary" />
                       <p className="mt-4 text-lg md:text-xl italic">
                         "{testimonial.quote}"

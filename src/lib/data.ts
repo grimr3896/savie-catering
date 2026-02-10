@@ -138,6 +138,7 @@ export const testimonials: Testimonial[] = [
   {
     id: 1,
     client_name: 'Sarah & Tom',
+    client_image_url: `https://picsum.photos/seed/401/100/100`,
     quote:
       'SAVIE ROYAL made our wedding day absolutely perfect. The food was divine, and the service was flawless. Our guests are still raving about the duck confit!',
     rating: 5,
@@ -149,6 +150,7 @@ export const testimonials: Testimonial[] = [
   {
     id: 2,
     client_name: 'John D., CEO of TechCorp',
+    client_image_url: `https://picsum.photos/seed/402/100/100`,
     quote:
       'The professionalism and quality from SAVIE ROYAL are unmatched. They handled our 500-guest gala with ease, and the food was a huge hit. Highly recommended.',
     rating: 5,
@@ -160,6 +162,7 @@ export const testimonials: Testimonial[] = [
   {
     id: 3,
     client_name: 'Maria G.',
+    client_image_url: `https://picsum.photos/seed/403/100/100`,
     quote:
       "I couldn't have asked for a better catering experience for my birthday. The team was so attentive, and the dessert table was a work of art. Thank you, SAVIE ROYAL!",
     rating: 5,

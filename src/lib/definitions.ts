@@ -26,6 +26,7 @@ export type GalleryImage = {
 export type Testimonial = {
   id: number;
   client_name: string;
+  client_image_url?: string;
   quote: string;
   rating: number; // numeric
   source: 'Google' | 'WhatsApp' | 'Facebook' | 'Manual';

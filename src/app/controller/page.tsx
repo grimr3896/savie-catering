@@ -433,6 +433,9 @@ const TestimonialEditDialog = ({
   const [rating, setRating] = React.useState(5);
   const [isFeatured, setIsFeatured] = React.useState(true);
   const [isActive, setIsActive] = React.useState(true);
+  const [imageFile, setImageFile] = React.useState<File | null>(null);
+  const [imagePreview, setImagePreview] = React.useState<string | null>(null);
+
 
   React.useEffect(() => {
     if (testimonial) {
@@ -441,17 +444,42 @@ const TestimonialEditDialog = ({
       setRating(testimonial.rating);
       setIsFeatured(testimonial.is_featured);
       setIsActive(testimonial.is_active);
+      setImagePreview(testimonial.client_image_url || null);
     } else {
       setClientName('');
       setQuote('');
       setRating(5);
       setIsFeatured(true);
       setIsActive(true);
+      setImagePreview(null);
     }
+     setImageFile(null); // Reset file on open
   }, [testimonial, open]);
 
+  React.useEffect(() => {
+    if (imageFile) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(imageFile);
+    }
+  }, [imageFile]);
+
   const handleSaveClick = () => {
-    onSave({ client_name: clientName, quote, rating: Number(rating), is_featured: isFeatured, is_active: isActive });
+    const saveData: Partial<Testimonial> = { 
+      client_name: clientName, 
+      quote, 
+      rating: Number(rating), 
+      is_featured: isFeatured, 
+      is_active: isActive 
+    };
+
+    if (imagePreview && imagePreview !== testimonial?.client_image_url) {
+      saveData.client_image_url = imagePreview;
+    }
+
+    onSave(saveData);
   };
 
   return (
@@ -462,7 +490,7 @@ const TestimonialEditDialog = ({
             {testimonial ? 'Edit Testimonial' : 'Add New Testimonial'}
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 py-4">
+        <div className="space-y-4 py-4  max-h-[70vh] overflow-y-auto pr-4">
           <div className="space-y-2">
             <Label htmlFor="testimonial-name">Client Name</Label>
             <Input
@@ -509,6 +537,20 @@ const TestimonialEditDialog = ({
            <div className="flex items-center space-x-2">
             <Switch id="testimonial-active" checked={isActive} onCheckedChange={setIsActive} />
             <Label htmlFor="testimonial-active">Testimonial is Active</Label>
+          </div>
+           <div className="space-y-2">
+            <Label>Client Image</Label>
+            {imagePreview && (
+              <div className="my-2 rounded-full w-24 h-24 mx-auto overflow-hidden relative">
+                <Image
+                  src={imagePreview}
+                  alt="Client image preview"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            )}
+            <ImageUploader onFileChange={setImageFile} />
           </div>
         </div>
         <DialogFooter>
@@ -927,6 +969,7 @@ export default function ControllerPage() {
       const newTestimonial: Testimonial = {
         id: Date.now(),
         client_name: testimonialData.client_name || "Anonymous",
+        client_image_url: testimonialData.client_image_url,
         quote: testimonialData.quote || "",
         rating: testimonialData.rating || 5,
         source: 'Manual',
@@ -1281,11 +1324,23 @@ export default function ControllerPage() {
                     key={testimonial.id}
                     className="border rounded-lg p-3 flex items-center justify-between"
                   >
-                    <div className="overflow-hidden">
-                      <p className="font-semibold">{testimonial.client_name}</p>
-                      <p className="text-sm text-muted-foreground truncate">
-                        "{testimonial.quote}"
-                      </p>
+                     <div className="flex items-center gap-3 overflow-hidden">
+                       {testimonial.client_image_url && (
+                          <Image
+                          src={testimonial.client_image_url}
+                          alt={testimonial.client_name}
+                          width={40}
+                          height={40}
+                          className="rounded-full flex-shrink-0"
+                          data-ai-hint="portrait person"
+                        />
+                       )}
+                      <div className="overflow-hidden">
+                        <p className="font-semibold">{testimonial.client_name}</p>
+                        <p className="text-sm text-muted-foreground truncate">
+                          "{testimonial.quote}"
+                        </p>
+                      </div>
                     </div>
                     <div className="flex gap-2 flex-shrink-0">
                       <Button
