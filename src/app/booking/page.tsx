@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon, Loader2 } from 'lucide-react';
+import { Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -33,7 +33,6 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { createBooking } from './actions';
 
 const bookingSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -50,7 +49,6 @@ type BookingFormValues = z.infer<typeof bookingSchema>;
 
 export default function BookingPage() {
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingSchema),
@@ -63,24 +61,33 @@ export default function BookingPage() {
     },
   });
 
-  async function onSubmit(data: BookingFormValues) {
-    setIsSubmitting(true);
-    const result = await createBooking(data);
-    setIsSubmitting(false);
+  function onSubmit(data: BookingFormValues) {
+    const { name, email, phone, eventType, eventDate, guestCount, venue, details } = data;
+    const recipientEmail = 'savieroyal1@gmail.com';
+    const emailSubject = encodeURIComponent(`Booking Request: ${eventType} for ${name}`);
+    const emailBody = encodeURIComponent(
+`New Booking Request:
 
-    if (result.success) {
-      toast({
-        title: 'Booking Request Sent!',
-        description: result.message,
-      });
-      form.reset();
-    } else {
-      toast({
-        variant: 'destructive',
-        title: 'Uh oh! Something went wrong.',
-        description: result.error,
-      });
-    }
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
+Event Type: ${eventType}
+Event Date: ${format(eventDate, 'PPP')}
+Guest Count: ${guestCount}
+Venue: ${venue}
+
+Additional Details:
+${details || 'N/A'}`
+    );
+
+    window.location.href = `mailto:${recipientEmail}?subject=${emailSubject}&body=${emailBody}`;
+
+    toast({
+      title: 'Opening your email client...',
+      description: 'Please complete and send the booking request from your mail application.',
+    });
+    
+    form.reset();
   }
 
   return (
@@ -264,8 +271,7 @@ export default function BookingPage() {
               )}
             />
 
-            <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" size="lg" className="w-full">
               Send Booking Request
             </Button>
           </form>
